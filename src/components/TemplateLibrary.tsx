@@ -12,10 +12,12 @@ import './TemplateLibrary.css';
 
 interface TemplateLibraryProps {
   onSelectTemplate?: (template: TemplateDefinition) => void;
+  onBackToDashboard?: () => void;
 }
 
 export const TemplateLibrary: React.FC<TemplateLibraryProps> = ({
-  onSelectTemplate
+  onSelectTemplate,
+  onBackToDashboard
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<TemplateCategory | 'all' | 'history'>('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -567,29 +569,45 @@ export const TemplateLibrary: React.FC<TemplateLibraryProps> = ({
     };
   };
 
-  // 渲染分类标签
+  // 渲染模块内顶栏（替代原来的 library-header）
+  const renderModuleHeader = () => (
+    <div className="module-topbar">
+      <div className="module-topbar-left">
+        {onBackToDashboard && (
+          <button className="btn-back-dashboard" onClick={onBackToDashboard}>
+            ← 返回
+          </button>
+        )}
+        <h1 className="module-page-title">UI发包模版</h1>
+      </div>
+      <div className="module-topbar-right">
+        <div className="search-box">
+          <input
+            type="text"
+            placeholder="搜索模版..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <span className="search-icon">🔍</span>
+        </div>
+      </div>
+    </div>
+  );
+
+  // 渲染分类标签（简化：只保留全部和历史记录）
   const renderCategoryTabs = () => (
     <div className="category-tabs">
       <button
         className={`tab-btn ${selectedCategory === 'all' ? 'active' : ''}`}
         onClick={() => setSelectedCategory('all')}
       >
-        全部
+        全部模版
       </button>
-      {(Object.keys(categoryLabels) as TemplateCategory[]).map(cat => (
-        <button
-          key={cat}
-          className={`tab-btn ${selectedCategory === cat ? 'active' : ''}`}
-          onClick={() => setSelectedCategory(cat)}
-        >
-          {categoryLabels[cat]}
-        </button>
-      ))}
       <button
         className={`tab-btn ${selectedCategory === 'history' ? 'active' : ''}`}
         onClick={() => setSelectedCategory('history')}
       >
-        历史记录
+        📋 历史记录
       </button>
     </div>
   );
@@ -703,33 +721,10 @@ export const TemplateLibrary: React.FC<TemplateLibraryProps> = ({
     </div>
   );
 
-  // 渲染模版列表
+  // 渲染模版列表（重构入口布局）
   const renderTemplateList = () => (
     <div className="template-library">
-      <div className="library-header">
-        <div className="header-left">
-          <h1 className="page-title">UI发包神器</h1>
-          <p className="page-subtitle">游戏视觉设计模版库</p>
-        </div>
-        <div className="header-right">
-          <div className="search-box">
-            <input
-              type="text"
-              placeholder="搜索模版..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <span className="search-icon">🔍</span>
-          </div>
-          <button 
-            className="btn-create"
-            onClick={() => setShowCreateModal(true)}
-          >
-            + 新建模版
-          </button>
-        </div>
-      </div>
-
+      {renderModuleHeader()}
       {renderCategoryTabs()}
 
       <div className="templates-grid">
@@ -743,7 +738,22 @@ export const TemplateLibrary: React.FC<TemplateLibraryProps> = ({
             </div>
           )
         ) : (
-          templates.map(renderTemplateCard)
+          <>
+            {/* 新建模版卡片 - 始终显示在第一个 */}
+            <div
+              className="template-card create-card"
+              onClick={() => setShowCreateModal(true)}
+            >
+              <div className="card-thumbnail create-thumbnail">
+                <span className="create-icon">＋</span>
+              </div>
+              <div className="card-content">
+                <h3 className="card-title">新建模版</h3>
+                <p className="card-description">从 Figma 导入或上传设计稿创建新模版</p>
+              </div>
+            </div>
+            {templates.map(renderTemplateCard)}
+          </>
         )}
         {selectedCategory !== 'history' && templates.length === 0 && (
           <div className="empty-state">

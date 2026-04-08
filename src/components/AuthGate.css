@@ -5,7 +5,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  background: #0f1923;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -13,33 +13,46 @@
 }
 
 .auth-gate-card {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(236, 232, 225, 0.04);
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
+  border: 1px solid rgba(236, 232, 225, 0.08);
+  border-radius: 4px;
   padding: 48px 40px;
   width: 380px;
   max-width: 90vw;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   text-align: center;
+  position: relative;
+  overflow: hidden;
 }
 
-.auth-gate-icon {
-  font-size: 48px;
-  margin-bottom: 16px;
+.auth-gate-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: #FF4655;
 }
 
 .auth-gate-title {
-  color: #ffffff;
-  font-size: 24px;
-  font-weight: 600;
+  font-family: var(--font-tungsten);
+  color: #ECE8E1;
+  font-size: 96px;
+  font-weight: normal;
   margin: 0 0 8px 0;
+  letter-spacing: 0;
+  text-transform: uppercase;
 }
 
 .auth-gate-subtitle {
-  color: rgba(255, 255, 255, 0.5);
+  font-family: var(--font-tungsten);
+  color: rgba(236, 232, 225, 0.4);
   font-size: 14px;
   margin: 0 0 32px 0;
+  letter-spacing: 2px;
+  text-transform: uppercase;
 }
 
 .auth-gate-form {
@@ -54,20 +67,22 @@
 
 .auth-gate-input-label {
   display: block;
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 13px;
+  color: rgba(236, 232, 225, 0.6);
+  font-size: 12px;
   text-align: left;
   margin-bottom: 8px;
-  font-weight: 500;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 
 .auth-gate-input {
   width: 100%;
   padding: 12px 16px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 10px;
-  color: #ffffff;
+  background: rgba(236, 232, 225, 0.06);
+  border: 1px solid rgba(236, 232, 225, 0.12);
+  border-radius: 2px;
+  color: #ECE8E1;
   font-size: 15px;
   outline: none;
   transition: all 0.2s ease;
@@ -75,44 +90,49 @@
 }
 
 .auth-gate-input::placeholder {
-  color: rgba(255, 255, 255, 0.3);
+  color: rgba(236, 232, 225, 0.25);
 }
 
 .auth-gate-input:focus {
-  border-color: #4a9eff;
-  background: rgba(255, 255, 255, 0.12);
-  box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.15);
+  border-color: #FF4655;
+  background: rgba(236, 232, 225, 0.08);
+  box-shadow: 0 0 0 3px rgba(255, 70, 85, 0.15);
 }
 
 .auth-gate-input.error {
-  border-color: #ff4757;
-  box-shadow: 0 0 0 3px rgba(255, 71, 87, 0.15);
+  border-color: #FF4655;
+  box-shadow: 0 0 0 3px rgba(255, 70, 85, 0.15);
 }
 
 .auth-gate-error {
-  color: #ff4757;
-  font-size: 13px;
+  color: #FF4655;
+  font-size: 12px;
   text-align: left;
   margin: -8px 0 0 0;
   animation: shake 0.3s ease;
+  letter-spacing: 0.5px;
 }
 
 .auth-gate-btn {
+  font-family: var(--font-tungsten);
   padding: 12px 24px;
-  background: linear-gradient(135deg, #4a9eff 0%, #6366f1 100%);
+  background: #FF4655;
   border: none;
-  border-radius: 10px;
+  border-radius: 2px;
   color: #ffffff;
-  font-size: 15px;
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: normal;
   cursor: pointer;
   transition: all 0.2s ease;
   margin-top: 8px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
 }
 
 .auth-gate-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(74, 158, 255, 0.4);
+  box-shadow: 0 4px 16px rgba(255, 70, 85, 0.4);
+  background: #e63e4c;
 }
 
 .auth-gate-btn:active {

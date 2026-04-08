@@ -1,3 +1,18 @@
+/* ========== Tungsten-Bold 字体引入 ========== */
+@font-face {
+  font-family: 'Tungsten';
+  src: url('/fonts/Tungsten-Bold.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* VALM OS 字体变量 */
+:root {
+  --font-tungsten: 'Tungsten', 'Impact', 'Arial Narrow', sans-serif;
+  --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
 /* 全局样式重置和基础样式 */
 
 * {
@@ -8,11 +23,11 @@
 
 html, body {
   height: 100%;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--font-body);
   font-size: 14px;
   line-height: 1.5;
-  color: #333;
-  background: #f5f7fa;
+  color: #ECE8E1;
+  background: #0f1923;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -28,34 +43,34 @@ html, body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: rgba(236, 232, 225, 0.05);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
+  background: rgba(236, 232, 225, 0.15);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
+  background: rgba(236, 232, 225, 0.25);
 }
 
 /* 选中文本样式 */
 ::selection {
-  background: rgba(24, 144, 255, 0.2);
-  color: #1890ff;
+  background: rgba(255, 70, 85, 0.3);
+  color: #FF4655;
 }
 
 /* 链接基础样式 */
 a {
-  color: #1890ff;
+  color: #FF4655;
   text-decoration: none;
-  transition: color 0.3s ease;
+  transition: color 0.2s ease;
 }
 
 a:hover {
-  color: #40a9ff;
+  color: #ff6b77;
 }
 
 /* 按钮基础样式 */

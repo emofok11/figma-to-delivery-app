@@ -50,13 +50,11 @@ const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
   return (
     <div className="auth-gate-overlay">
       <div className="auth-gate-card">
-        <div className="auth-gate-icon">🔐</div>
-        <h1 className="auth-gate-title">UI发包神器</h1>
-        <p className="auth-gate-subtitle">请输入用户组标识以继续访问</p>
+        <h1 className="auth-gate-title">VALM OS</h1>
+        <p className="auth-gate-subtitle">TACTICAL DESIGN SYSTEM</p>
 
         <form className="auth-gate-form" onSubmit={handleSubmit}>
           <div className="auth-gate-input-wrapper">
-            <label className="auth-gate-input-label">用户组</label>
             <input
               className={`auth-gate-input ${error ? 'error' : ''}`}
               type="password"
@@ -78,7 +76,7 @@ const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
             type="submit"
             disabled={loading}
           >
-            {loading ? '验证中...' : '进入系统'}
+            {loading ? '验证中...' : '进入作战系统'}
           </button>
         </form>
       </div>
