@@ -1,0 +1,82 @@
+[
+  {
+    "query": "我是做游戏UI的，老板让我搞一个发包工具，能从Figma设计稿直接生成可以填表提交的页面，类似击杀图标那种模版，设计稿链接是 https://www.figma.com/design/xxx/kill-icon?node-id=1-100",
+    "should_trigger": true
+  },
+  {
+    "query": "帮我新增一个技能图标的发包模版，figma链接 https://www.figma.com/design/aaa/skill?node-id=26-300，里面有3张效果图和技能名称、技能描述两个文字字段",
+    "should_trigger": true
+  },
+  {
+    "query": "发包神器的预览页面里图片标签颜色不对，应该是灰色的不是白色的，而且标签要在图片上面不是下面，帮我改一下",
+    "should_trigger": true
+  },
+  {
+    "query": "列表表格模板的编辑器里每条需求只有一个图片坑位，我想加个+号按钮可以动态添加更多参考图上传框",
+    "should_trigger": true
+  },
+  {
+    "query": "我们组的美术资源发包流程太麻烦了，每次都要手动截图贴word，能不能做个工具直接从设计稿生成编辑器，填完表就能导出文档",
+    "should_trigger": true
+  },
+  {
+    "query": "模版库管理页面打开后卡片显示不全，分类筛选也不好使，帮我看看 TemplateLibrary 组件哪里有问题",
+    "should_trigger": true
+  },
+  {
+    "query": "帮我用容器零件库快速拼一个新模版，包含整体印象描述、5条具体需求列表、和一组参考图片",
+    "should_trigger": true
+  },
+  {
+    "query": "编辑器里动态添加的额外要点，保存草稿后重新打开就没了，extra-impression开头的那些数据丢失了",
+    "should_trigger": true
+  },
+  {
+    "query": "从这个竖版的figma设计稿生成一个列表表格类型的发包模板 https://www.figma.com/design/bbb/vertical-list?node-id=5-200",
+    "should_trigger": true
+  },
+  {
+    "query": "击杀图标编辑器和通用编辑器里的添加条目按钮样式不一样，导航tab双击编辑后高度会跳，帮我统一修复下",
+    "should_trigger": true
+  },
+  {
+    "query": "帮我读取这个Figma设计稿的颜色和字体信息，我要整理一份设计规范文档 https://www.figma.com/design/ccc/design-system?node-id=1-1",
+    "should_trigger": false
+  },
+  {
+    "query": "我有一个PDF发票文件需要提取里面的表格数据，转成Excel格式，文件在 ~/Downloads/invoice_2024.pdf",
+    "should_trigger": false
+  },
+  {
+    "query": "帮我做一个PPT模版，要有公司logo和统一的配色方案，大概10页左右的产品介绍deck",
+    "should_trigger": false
+  },
+  {
+    "query": "帮我优化一下发包神器skill的触发描述，让它更容易被正确触发",
+    "should_trigger": false
+  },
+  {
+    "query": "我想做一个React表单生成器，用户可以拖拽组件来搭建表单，类似低代码平台那种",
+    "should_trigger": false
+  },
+  {
+    "query": "帮我把这个Figma设计稿切图导出成PNG和SVG资源，我要用在app里 https://www.figma.com/design/ddd/icons?node-id=2-50",
+    "should_trigger": false
+  },
+  {
+    "query": "我需要一个图片上传组件，支持裁切和缩放，用react-image-crop实现，放在我的用户头像设置页面",
+    "should_trigger": false
+  },
+  {
+    "query": "帮我写一个Node.js脚本，批量从Figma API拉取所有页面的设计数据并保存为JSON文件",
+    "should_trigger": false
+  },
+  {
+    "query": "我们项目的模版引擎用的是Handlebars，帮我新增一个邮件通知模版，变量有用户名、订单号和金额",
+    "should_trigger": false
+  },
+  {
+    "query": "帮我做一个游戏内的背包UI界面，要有物品网格、装备栏和道具详情弹窗，用Unity UGUI实现",
+    "should_trigger": false
+  }
+]

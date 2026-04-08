@@ -121,11 +121,13 @@ export const CreateTemplateModal: React.FC<CreateTemplateModalProps> = ({
     setIsAnalyzing(true);
     try {
       const result = await analyzeImage(file);
-      // analyzeImage 返回的结果直接包含 suggestedCategory，无需通过 smartResult
-      setParseResult(null);
-      // 自动填充建议的分类
-      if (result.suggestedCategory) {
-        setCategory(result.suggestedCategory);
+      setParseResult(result.smartResult || null);
+      // 自动填充建议的名称和分类
+      if (result.smartResult?.suggestedName) {
+        setName(result.smartResult.suggestedName);
+      }
+      if (result.smartResult?.suggestedCategory) {
+        setCategory(result.smartResult.suggestedCategory);
       }
     } catch (error: any) {
       console.error('图片解析失败:', error);

@@ -1,272 +1,307 @@
-/**
- * 图片分析器
- * 从上传的设计稿图片智能推断模版结构
- */
+// 图片智能解析工具
+// 分析上传的设计稿图片，识别框架结构（标题、列表、图片等），生成灵活可扩展的模板
 
-import { TemplateCategory, TextFieldConfig, ImageSlotConfig } from '../types/template';
+import { TextFieldConfig, ImageSlotConfig, TemplateCategory, SmartParseResult, ContainerPart } from '../types/template';
+import { createTitlePart, createDescriptionPart, createListItemPart, createImageGroupPart } from './containerParts';
+import { templateRegistry } from './templateRegistry';
 
-interface ImageAnalysisResult {
-  suggestedCategory: TemplateCategory;
+// 图片解析结果（兼容旧版）
+export interface ImageAnalysisResult {
   textFields: TextFieldConfig[];
   imageSlots: ImageSlotConfig[];
+  suggestedCategory: TemplateCategory;
+  suggestedName: string;
   previewLayout: {
     width: number;
     height: number;
-    backgroundColor?: string;
+    backgroundColor: string;
+  };
+  // 原始图片信息
+  imageInfo: {
+    width: number;
+    height: number;
+    dataUrl: string; // base64 预览
+  };
+  // 新增：智能解析结果
+  smartResult?: SmartParseResult;
+}
+
+/**
+ * 智能分析上传的图片文件
+ * 识别框架结构（标题、列表、图片等），生成灵活可扩展的模板
+ * 
+ * 核心策略：
+ * 1. 基于图片尺寸和宽高比推断模块结构
+ * 2. 学习已有模板的框架（如list-table的标准结构）
+ * 3. 每个模块只生成1个容器 + 添加按钮，支持动态扩展
+ */
+export async function analyzeImage(file: File, ocrResult?: string): Promise<ImageAnalysisResult> {
+  // 读取图片并获取尺寸信息
+  const imageInfo = await loadImageInfo(file);
+  
+  // 智能解析：识别模块结构
+  const smartResult = parseImageStructure(imageInfo, ocrResult);
+  
+  // 将容器零件转换为字段和坑位
+  const { textFields, imageSlots } = convertPartsToFields(smartResult.modules);
+  
+  return {
+    textFields,
+    imageSlots,
+    suggestedCategory: smartResult.suggestedCategory,
+    suggestedName: smartResult.suggestedName,
+    previewLayout: {
+      width: smartResult.previewLayout.width,
+      height: smartResult.previewLayout.height,
+      backgroundColor: smartResult.previewLayout.backgroundColor || '#1a1a2e'
+    },
+    imageInfo,
+    smartResult
   };
 }
 
 /**
- * 分析上传的图片，推断模版结构
+ * 智能解析图片结构
+ * 根据图片特征和OCR结果识别模块
  */
-export async function analyzeImage(file: File): Promise<ImageAnalysisResult> {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    const reader = new FileReader();
-
-    reader.onload = (e) => {
-      img.src = e.target?.result as string;
-    };
-
-    img.onload = () => {
-      const width = img.naturalWidth;
-      const height = img.naturalHeight;
-      const ratio = width / height;
-
-      // 根据宽高比推断分类
-      let suggestedCategory: TemplateCategory;
-      if (height > width * 1.5) {
-        // 高远大于宽 -> 列表表格
-        suggestedCategory = 'list-table';
-      } else if (ratio > 2) {
-        // 非常宽 -> 宣传图
-        suggestedCategory = 'banner';
-      } else if (ratio > 0.9 && ratio < 1.1) {
-        // 接近正方形 -> 图标类
-        suggestedCategory = 'kill-icon';
-      } else if (width > height) {
-        // 宽大于高 -> UI面板
-        suggestedCategory = 'ui-panel';
-      } else {
-        suggestedCategory = 'other';
+function parseImageStructure(
+  imageInfo: { width: number; height: number; dataUrl: string },
+  ocrResult?: string
+): SmartParseResult {
+  const modules: ContainerPart[] = [];
+  let suggestedName = '新建模板';
+  
+  // 根据宽高比推断分类和基本结构
+  const ratio = imageInfo.width / imageInfo.height;
+  const inferredCategory = inferCategory(imageInfo);
+  
+  // 尝试从已有模板学习结构
+  const existingTemplate = findSimilarTemplate(inferredCategory);
+  
+  if (existingTemplate) {
+    // 学习已有模板的结构框架
+    suggestedName = `${existingTemplate.name}（副本）`;
+    const learnedModules = learnFromTemplate(existingTemplate);
+    modules.push(...learnedModules);
+  } else {
+    // 根据图片特征生成默认结构
+    modules.push(...generateDefaultStructure(inferredCategory, imageInfo, ocrResult));
+  }
+  
+  // 如果有OCR结果，尝试提取标题
+  if (ocrResult) {
+    const titleMatch = ocrResult.match(/^.{2,20}?$/m);
+    if (titleMatch) {
+      suggestedName = titleMatch[0].trim();
+      // 更新标题模块的默认值
+      const titleModule = modules.find(m => m.type === 'title');
+      if (titleModule && titleModule.textFields[0]) {
+        titleModule.textFields[0].defaultValue = suggestedName;
+        titleModule.defaultValue = suggestedName;
       }
+    }
+  }
+  
+  return {
+    modules,
+    suggestedName,
+    suggestedCategory: inferredCategory,
+    confidence: 0.7,
+    rawText: ocrResult || '',
+    previewLayout: {
+      width: Math.min(imageInfo.width, 1200),
+      height: Math.min(imageInfo.height, 2000),
+      backgroundColor: '#1a1a2e'
+    }
+  };
+}
 
-      // 根据分类生成默认字段和图片槽位
-      const result = generateDefaultStructure(suggestedCategory, width, height);
-      resolve(result);
+/**
+ * 从已有模板学习结构
+ * 学习框架而非具体内容：标题模块 → 整体印象模块 → 列表条目模块 → 参考图模块
+ */
+function learnFromTemplate(template: { 
+  textFields: TextFieldConfig[]; 
+  imageSlots: ImageSlotConfig[];
+  category: TemplateCategory;
+}): ContainerPart[] {
+  const modules: ContainerPart[] = [];
+  
+  // 学习标题模块（取第一个字段作为标题）
+  const titleField = template.textFields.find(f => f.id.includes('theme') || f.id.includes('name'));
+  if (titleField) {
+    modules.push(createTitlePart({ defaultValue: '' }));
+  }
+  
+  // 学习描述模块（整体印象）
+  const impressionFields = template.textFields.filter(f => f.id.includes('impression') || f.id.includes('overall'));
+  if (impressionFields.length > 0) {
+    // 只生成1个描述模块，支持动态添加
+    modules.push(createDescriptionPart({ label: '整体印象' }));
+  }
+  
+  // 学习列表条目模块（关键：只生成1个，支持动态添加）
+  const listItemCount = template.textFields.filter(f => f.id.includes('specific-item-title')).length;
+  if (listItemCount > 0 || template.category === 'list-table') {
+    // 只生成1个列表条目容器
+    modules.push(createListItemPart(1));
+  }
+  
+  // 学习图片组模块（参考图）
+  const refImages = template.imageSlots.filter(slot => slot.id.includes('reference'));
+  if (refImages.length > 0) {
+    // 只生成1个参考图坑位
+    modules.push(createImageGroupPart({ label: '参考图', count: 1 }));
+  }
+  
+  return modules;
+}
+
+/**
+ * 根据分类生成默认结构
+ * 每种分类都有标准的模块组合
+ */
+function generateDefaultStructure(
+  category: TemplateCategory,
+  imageInfo: { width: number; height: number },
+  ocrResult?: string
+): ContainerPart[] {
+  const modules: ContainerPart[] = [];
+  
+  switch (category) {
+    case 'list-table':
+      // 列表表格标准结构：标题 + 整体印象 + 列表条目（1个） + 参考图（1个）
+      modules.push(createTitlePart());
+      modules.push(createDescriptionPart({ label: '整体印象' }));
+      modules.push(createListItemPart(1)); // 只生成1个列表条目
+      modules.push(createImageGroupPart({ label: '参考图', count: 1 }));
+      break;
+      
+    case 'kill-icon':
+    case 'skill-icon':
+    case 'item-icon':
+    case 'social-icon':
+      // 图标类标准结构：标题 + 描述 + 主图标 + 参考图
+      modules.push(createTitlePart());
+      modules.push(createDescriptionPart({ label: '设计说明' }));
+      modules.push({
+        id: 'icon-main',
+        type: 'image-group',
+        label: '主图标',
+        description: '主图标资源',
+        isRepeatable: false,
+        textFields: [],
+        imageSlots: [{
+          id: 'icon-main',
+          label: '主图标',
+          description: `主图标，建议尺寸 ${imageInfo.width}x${imageInfo.height}`,
+          required: true,
+          minWidth: 64,
+          minHeight: 64,
+          maxWidth: 512,
+          maxHeight: 512,
+          supportedFormats: ['png', 'psd', 'jpg']
+        }]
+      });
+      modules.push(createImageGroupPart({ label: '参考图', count: 1 }));
+      break;
+      
+    case 'banner':
+      // 横幅标准结构：标题 + 横幅文案 + 主图
+      modules.push(createTitlePart());
+      modules.push(createDescriptionPart({ label: '横幅文案' }));
+      modules.push(createImageGroupPart({ label: '横幅主图', count: 1 }));
+      break;
+      
+    default:
+      // 通用结构：标题 + 描述 + 图片组
+      modules.push(createTitlePart());
+      modules.push(createDescriptionPart());
+      modules.push(createImageGroupPart({ count: 1 }));
+  }
+  
+  return modules;
+}
+
+/**
+ * 查找相似模板用于学习
+ */
+function findSimilarTemplate(category: TemplateCategory) {
+  const allTemplates = templateRegistry.getAll();
+  return allTemplates.find(t => t.category === category) || null;
+}
+
+/**
+ * 将容器零件转换为字段和坑位配置
+ */
+function convertPartsToFields(modules: ContainerPart[]): {
+  textFields: TextFieldConfig[];
+  imageSlots: ImageSlotConfig[];
+} {
+  const textFields: TextFieldConfig[] = [];
+  const imageSlots: ImageSlotConfig[] = [];
+  
+  modules.forEach(module => {
+    textFields.push(...module.textFields);
+    imageSlots.push(...module.imageSlots);
+  });
+  
+  return { textFields, imageSlots };
+}
+
+/**
+ * 加载图片并获取尺寸信息
+ */
+function loadImageInfo(file: File): Promise<{ width: number; height: number; dataUrl: string }> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result as string;
+      const img = new Image();
+      img.onload = () => {
+        resolve({
+          width: img.naturalWidth,
+          height: img.naturalHeight,
+          dataUrl
+        });
+      };
+      img.onerror = () => reject(new Error('图片加载失败'));
+      img.src = dataUrl;
     };
-
-    img.onerror = () => {
-      reject(new Error('图片加载失败'));
-    };
-
-    reader.onerror = () => {
-      reject(new Error('文件读取失败'));
-    };
-
+    reader.onerror = () => reject(new Error('文件读取失败'));
     reader.readAsDataURL(file);
   });
 }
 
 /**
- * 根据分类生成默认模版结构
+ * 根据图片特征推断模板分类
+ * - 宽高比接近 1:1 → 图标类（kill-icon / skill-icon / item-icon）
+ * - 宽 > 高 明显 → 横幅 banner
+ * - 高 > 宽 明显 → 列表表格 list-table
+ * - 其他 → other
  */
-function generateDefaultStructure(
-  category: TemplateCategory,
-  width: number,
-  height: number
-): ImageAnalysisResult {
-  const commonTextFields: TextFieldConfig[] = [
-    {
-      id: 'name',
-      label: '名称',
-      placeholder: '请输入名称',
-      defaultValue: '',
-      required: true
-    },
-    {
-      id: 'description',
-      label: '描述',
-      placeholder: '请输入描述',
-      defaultValue: '',
-      required: false,
-      maxLength: 500
-    }
-  ];
-
-  const commonImageSlots: ImageSlotConfig[] = [
-    {
-      id: 'main-image',
-      label: '主图片',
-      description: '主要图片资源',
-      required: true,
-      supportedFormats: ['png', 'jpg', 'psd']
-    }
-  ];
-
-  // 根据不同分类定制结构
-  switch (category) {
-    case 'list-table':
-      return {
-        suggestedCategory: category,
-        textFields: [
-          ...commonTextFields,
-          {
-            id: 'item-1-title',
-            label: '条目1标题',
-            placeholder: '请输入条目标题',
-            defaultValue: '',
-            required: false
-          },
-          {
-            id: 'item-1-desc',
-            label: '条目1描述',
-            placeholder: '请输入条目描述',
-            defaultValue: '',
-            required: false
-          }
-        ],
-        imageSlots: [
-          {
-            id: 'item-1-img',
-            label: '条目1参考图',
-            description: '条目1的参考图片',
-            required: false,
-            supportedFormats: ['png', 'jpg', 'psd']
-          }
-        ],
-        previewLayout: { width: 900, height: 800, backgroundColor: '#1a1a2e' }
-      };
-
-    case 'kill-icon':
-    case 'skill-icon':
-    case 'item-icon':
-      return {
-        suggestedCategory: category,
-        textFields: [
-          {
-            id: 'icon-name',
-            label: '图标名称',
-            placeholder: '请输入图标名称',
-            defaultValue: '',
-            required: true
-          },
-          {
-            id: 'icon-style',
-            label: '设计风格',
-            placeholder: '请描述设计风格',
-            defaultValue: '',
-            required: false
-          },
-          {
-            id: 'icon-desc',
-            label: '设计说明',
-            placeholder: '请输入设计说明',
-            defaultValue: '',
-            required: false
-          }
-        ],
-        imageSlots: [
-          {
-            id: 'icon-main',
-            label: '图标主图',
-            description: '图标主体图片',
-            required: true,
-            supportedFormats: ['png', 'jpg', 'psd']
-          },
-          {
-            id: 'icon-reference',
-            label: '参考图',
-            description: '参考图片',
-            required: false,
-            supportedFormats: ['png', 'jpg', 'psd']
-          }
-        ],
-        previewLayout: { width: 800, height: 600, backgroundColor: '#1a1a2e' }
-      };
-
-    case 'banner':
-      return {
-        suggestedCategory: category,
-        textFields: [
-          {
-            id: 'banner-title',
-            label: '标题',
-            placeholder: '请输入Banner标题',
-            defaultValue: '',
-            required: true
-          },
-          {
-            id: 'banner-subtitle',
-            label: '副标题',
-            placeholder: '请输入副标题',
-            defaultValue: '',
-            required: false
-          },
-          {
-            id: 'banner-desc',
-            label: '设计说明',
-            placeholder: '请输入设计说明',
-            defaultValue: '',
-            required: false
-          }
-        ],
-        imageSlots: [
-          {
-            id: 'banner-main',
-            label: 'Banner主图',
-            description: 'Banner主体图片',
-            required: true,
-            supportedFormats: ['png', 'jpg', 'psd']
-          }
-        ],
-        previewLayout: { width: 1200, height: 400, backgroundColor: '#1a1a2e' }
-      };
-
-    case 'ui-panel':
-      return {
-        suggestedCategory: category,
-        textFields: [
-          {
-            id: 'panel-name',
-            label: '面板名称',
-            placeholder: '请输入面板名称',
-            defaultValue: '',
-            required: true
-          },
-          {
-            id: 'panel-function',
-            label: '功能说明',
-            placeholder: '请描述面板功能',
-            defaultValue: '',
-            required: false
-          }
-        ],
-        imageSlots: [
-          {
-            id: 'panel-main',
-            label: '面板主图',
-            description: '面板主体图片',
-            required: true,
-            supportedFormats: ['png', 'jpg', 'psd']
-          },
-          {
-            id: 'panel-interaction',
-            label: '交互说明图',
-            description: '交互说明参考图',
-            required: false,
-            supportedFormats: ['png', 'jpg', 'psd']
-          }
-        ],
-        previewLayout: { width: 1000, height: 600, backgroundColor: '#1a1a2e' }
-      };
-
-    default:
-      return {
-        suggestedCategory: category,
-        textFields: commonTextFields,
-        imageSlots: commonImageSlots,
-        previewLayout: { width, height, backgroundColor: '#1a1a2e' }
-      };
+function inferCategory(imageInfo: { width: number; height: number }): TemplateCategory {
+  const ratio = imageInfo.width / imageInfo.height;
+  
+  if (ratio >= 0.8 && ratio <= 1.2) {
+    // 接近正方形 → 图标类
+    if (imageInfo.width <= 256) return 'kill-icon';
+    if (imageInfo.width <= 512) return 'skill-icon';
+    return 'item-icon';
   }
+  
+  if (ratio > 2.0) {
+    // 非常宽 → 横幅
+    return 'banner';
+  }
+  
+  if (ratio < 0.6) {
+    // 非常高 → 列表表格
+    return 'list-table';
+  }
+  
+  // 默认
+  return 'other';
 }
+
+export default { analyzeImage, parseImageStructure, convertPartsToFields };

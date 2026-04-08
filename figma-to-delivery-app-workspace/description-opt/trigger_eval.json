@@ -1,0 +1,142 @@
+[
+  {
+    "query": "我是做游戏UI的，老板让我搞一个发包神器，能从 Figma 设计稿直接生成一个填表的工具，美术同事填完表就能出发包文档那种。先做一个击杀图标的模版，figma链接是 https://www.figma.com/design/aX96J7GfUEMKluX5SyXDrX/kill-icon?node-id=26-41378",
+    "should_trigger": true
+  },
+  {
+    "query": "帮我用容器零件库拼一个新模版，需要 description 容器放整体印象、3个 list 容器放具体需求、一个 image-group 放参考图，最后用 divider 隔开备注区域",
+    "should_trigger": true
+  },
+  {
+    "query": "发包工具的编辑器里，动态添加的 extra-impression 条目保存草稿后再打开就没了，textValues 里的 extra-* 数据丢失了，帮我修一下持久化的bug",
+    "should_trigger": true
+  },
+  {
+    "query": "列表表格模板编辑器里的图片预览效果不好，图片被固定宽度限制了，我想让它按原始比例自适应显示，每行3张自动换行，去掉边框",
+    "should_trigger": true
+  },
+  {
+    "query": "我想给发包编辑器加个粘贴上传功能，选中图片坑位后直接 Ctrl+V 就能把剪贴板的截图粘进去，不用每次都点选文件按钮",
+    "should_trigger": true
+  },
+  {
+    "query": "帮我新增一个社交图标类型的发包模版，Figma 链接 https://www.figma.com/design/xxx/social-icons?node-id=5-200，里面有图标名称、平台标签、3张不同尺寸的图标效果图",
+    "should_trigger": true
+  },
+  {
+    "query": "DocumentPreview 预览组件里图片标签颜色不对，应该是 #8B978F 灰色加粗的，而且标签要在图片上面不是下面，分类标题也要去掉",
+    "should_trigger": true
+  },
+  {
+    "query": "编辑器里删除按钮被相邻容器遮住了点不到，overflow 好像设成 hidden 了，还有 z-index 层级也不对，帮我修复这个遮挡问题",
+    "should_trigger": true
+  },
+  {
+    "query": "从这个 Figma 设计稿生成编辑器，链接 https://www.figma.com/design/xxx/button-specs?node-id=10-500，是一个按钮规格的发包需求，里面有按钮名称、状态描述、尺寸参数表格和4张效果图",
+    "should_trigger": true
+  },
+  {
+    "query": "TemplateLibrary 模版库组件里模版卡片的缩略图显示不全，而且点击卡片进入编辑器后导航页签双击编辑会高度跳变，单击也会误触发编辑态",
+    "should_trigger": true
+  },
+  {
+    "query": "更新预览渲染效果，description 容器的条目在预览里应该显示为 bullet point 列表，现在显示的不对",
+    "should_trigger": true
+  },
+  {
+    "query": "更新预览排版，发包文档预览里的表格列宽不均匀，参考图那列太窄了，描述列太宽",
+    "should_trigger": true
+  },
+  {
+    "query": "预览样式调整一下，章节标题颜色应该是红色 #e8384a，现在变成白色了，字段标签也没有绿色加粗",
+    "should_trigger": true
+  },
+  {
+    "query": "帮我修改一下发包文档的预览效果，image-group 容器的图片在预览里应该横向排列不换行，现在变成网格了",
+    "should_trigger": true
+  },
+  {
+    "query": "编辑器里填的内容和预览文档显示的不一样，自定义描述填了3个要点但预览只显示了1个，转换逻辑有bug",
+    "should_trigger": true
+  },
+  {
+    "query": "发包文档导出后样式不对，深色主题的背景色和字体大小跟预览里看到的不一致，需要统一导出样式",
+    "should_trigger": true
+  },
+  {
+    "query": "草稿保存后再打开，之前填的内容全没了，帮我修一下草稿恢复的bug",
+    "should_trigger": true
+  },
+  {
+    "query": "帮我把发包文档导出为图片，导出的图片分辨率太低了，文字模糊",
+    "should_trigger": true
+  },
+  {
+    "query": "创建模版弹窗里上传图片后智能解析没反应，解析出来的字段也不对",
+    "should_trigger": true
+  },
+  {
+    "query": "图片裁切功能有问题，裁切后的图片比例不对，缩放也不生效",
+    "should_trigger": true
+  },
+  {
+    "query": "模块拖拽排序不生效，拖动手柄没反应，松手后模块位置没变",
+    "should_trigger": true
+  },
+  {
+    "query": "发包编辑器的字段标题不能编辑了，双击没反应，标签编辑功能坏了",
+    "should_trigger": true
+  },
+  {
+    "query": "图片标签不显示，自定义的标签名在预览里看不到，默认标签倒是显示了不该显示的",
+    "should_trigger": true
+  },
+  {
+    "query": "两个编辑器的删除按钮样式不一样，一个有圆角一个没有，组件一致性有问题，帮我统一一下",
+    "should_trigger": true
+  },
+  {
+    "query": "帮我注册一个新的击杀图标模版到模版库，让其他同事也能用",
+    "should_trigger": true
+  },
+  {
+    "query": "帮我写一个 React 的用户登录注册页面，要有表单验证、记住密码功能，用 antd 组件库，后端接口是 /api/auth/login",
+    "should_trigger": false
+  },
+  {
+    "query": "我的 Figma 设计稿需要导出为 PNG 和 SVG 格式的切图资源，分辨率要 2x 和 3x 两套，帮我批量导出到 assets 目录下",
+    "should_trigger": false
+  },
+  {
+    "query": "帮我做一个数据可视化大屏，用 ECharts 展示实时销售数据，要有折线图、饼图和地图，数据从 WebSocket 推送过来",
+    "should_trigger": false
+  },
+  {
+    "query": "我有一个 Excel 表格需要转成网页表单，字段有姓名、电话、地址，提交后存到数据库，用 Vue3 + Element Plus 实现",
+    "should_trigger": false
+  },
+  {
+    "query": "帮我把这个 Figma 设计稿还原成静态 HTML 页面，是一个企业官网的首页，要响应式布局适配手机端，链接 https://www.figma.com/design/xxx/homepage?node-id=1-1",
+    "should_trigger": false
+  },
+  {
+    "query": "项目里的 TypeScript 类型定义太乱了，帮我重构一下 src/types 目录，把接口和枚举分开，加上 JSDoc 注释",
+    "should_trigger": false
+  },
+  {
+    "query": "帮我优化这个 skill 的 SKILL.md 文档，触发描述不够准确，需要运行 evals 测试一下效果",
+    "should_trigger": false
+  },
+  {
+    "query": "我需要一个图片上传组件，支持拖拽上传、预览、裁切功能，用 React + react-image-crop 实现，上传到 OSS",
+    "should_trigger": false
+  },
+  {
+    "query": "帮我搭建一个 Storybook 组件文档站，把项目里所有的 UI 组件都加上 stories，支持交互式预览和参数调整",
+    "should_trigger": false
+  },
+  {
+    "query": "游戏里的技能图标需要做一套 spine 动画，帮我写个 PixiJS 的播放器组件，能加载 .json + .atlas + .png 资源并循环播放",
+    "should_trigger": false
+  }
+]
