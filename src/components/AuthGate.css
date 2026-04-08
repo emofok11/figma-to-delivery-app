@@ -1,0 +1,126 @@
+/* 认证门禁页样式 */
+.auth-gate-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+}
+
+.auth-gate-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 48px 40px;
+  width: 380px;
+  max-width: 90vw;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.auth-gate-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.auth-gate-title {
+  color: #ffffff;
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+}
+
+.auth-gate-subtitle {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 14px;
+  margin: 0 0 32px 0;
+}
+
+.auth-gate-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.auth-gate-input-wrapper {
+  position: relative;
+}
+
+.auth-gate-input-label {
+  display: block;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 13px;
+  text-align: left;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.auth-gate-input {
+  width: 100%;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  color: #ffffff;
+  font-size: 15px;
+  outline: none;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.auth-gate-input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.auth-gate-input:focus {
+  border-color: #4a9eff;
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.15);
+}
+
+.auth-gate-input.error {
+  border-color: #ff4757;
+  box-shadow: 0 0 0 3px rgba(255, 71, 87, 0.15);
+}
+
+.auth-gate-error {
+  color: #ff4757;
+  font-size: 13px;
+  text-align: left;
+  margin: -8px 0 0 0;
+  animation: shake 0.3s ease;
+}
+
+.auth-gate-btn {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #4a9eff 0%, #6366f1 100%);
+  border: none;
+  border-radius: 10px;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 8px;
+}
+
+.auth-gate-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(74, 158, 255, 0.4);
+}
+
+.auth-gate-btn:active {
+  transform: translateY(0);
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
