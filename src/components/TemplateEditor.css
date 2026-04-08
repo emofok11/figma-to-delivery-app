@@ -1,0 +1,859 @@
+/* 通用编辑器样式 — 参照击杀图标编辑器的紧凑左右结构 */
+
+.template-editor {
+  height: 100vh;
+  overflow: hidden;
+  background: #f0f2f5;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== 头部 — 与击杀图标编辑器一致的渐变头部 ===== */
+.template-editor .editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 24px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  box-shadow: 0 2px 12px rgba(102, 126, 234, 0.3);
+  flex-shrink: 0;
+  border-bottom: none;
+}
+
+/* 头部左侧：返回按钮 + 模版名称 + 版本 */
+.template-editor .header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.template-editor .btn-back-inline {
+  padding: 5px 12px;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-right: 4px;
+}
+
+.template-editor .btn-back-inline:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateX(-2px);
+}
+
+.template-editor .template-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+}
+
+.template-editor .badge-icon {
+  font-size: 16px;
+}
+
+.template-editor .badge-text {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* 可编辑的模板名称：双击提示 */
+.template-editor .badge-text-editable {
+  cursor: default;
+  border-radius: 4px;
+  padding: 0 4px;
+  transition: background 0.2s;
+}
+.template-editor .badge-text-editable:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.template-editor .version-tag {
+  padding: 3px 10px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  font-size: 11px;
+}
+
+/* 可编辑的版本号：双击提示 */
+.template-editor .version-tag-editable {
+  cursor: default;
+  transition: background 0.2s;
+}
+.template-editor .version-tag-editable:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* 头部内联编辑输入框（模板名称/版本号） */
+.template-editor .header-inline-input {
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.15);
+  color: inherit;
+  outline: none;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+.template-editor .header-inline-input:focus {
+  border-color: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+}
+
+/* 模板名称输入框 */
+.template-editor .header-name-input {
+  font-size: 15px;
+  font-weight: 600;
+  padding: 0 4px;
+  width: 120px;
+}
+
+/* 版本号输入框 */
+.template-editor .header-version-input {
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 10px;
+  width: 80px;
+}
+
+/* 头部右侧：操作按钮 */
+.template-editor .header-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.template-editor .btn-save,
+.template-editor .btn-preview,
+.template-editor .btn-export {
+  padding: 6px 16px;
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.template-editor .btn-save {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.template-editor .btn-save:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.template-editor .btn-preview {
+  background: rgba(255, 255, 255, 0.35);
+  color: white;
+}
+
+.template-editor .btn-preview:hover {
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.template-editor .btn-export {
+  background: white;
+  color: #667eea;
+}
+
+.template-editor .btn-export:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* ===== 主内容 — 强制左右结构 ===== */
+.template-editor .editor-main {
+  display: flex;
+  flex-direction: row !important;
+  flex: 1;
+  overflow: hidden;
+  height: calc(100vh - 52px); /* 减去头部高度 */
+  padding: 0 !important;
+  gap: 0 !important;
+}
+
+/* ===== 左侧导航栏 ===== */
+.template-editor .sidebar-nav {
+  width: 160px;
+  background: white;
+  border-right: 1px solid #e8e8e8;
+  padding: 12px 0;
+  overflow: visible;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 导航列表区域 - 可滚动 */
+.template-editor .nav-list {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.template-editor .nav-item {
+  display: block;
+  padding: 8px 14px;
+  border-left: 3px solid transparent;
+  color: #666;
+  text-decoration: none;
+  font-size: 13px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+.template-editor .nav-item:hover {
+  background: #f5f7fa;
+  color: #333;
+  border-left-color: inherit;
+}
+
+/* ===== 右侧编辑区域 — 纵向排列 ===== */
+.template-editor .editor-content {
+  flex: 1;
+  padding: 16px 20px;
+  overflow-y: auto;
+}
+
+/* ===== 模块区域 ===== */
+.template-editor .module-section {
+  background: white;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.template-editor .module-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #fafafa;
+  border-left: 3px solid;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.template-editor .module-icon {
+  font-size: 15px;
+}
+
+.template-editor .module-title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* 可编辑的模块标题输入框 */
+.template-editor .module-title-input {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 2px 6px;
+  background: transparent;
+  outline: none;
+  transition: all 0.2s ease;
+  min-width: 80px;
+  max-width: 200px;
+}
+
+.template-editor .module-title-input:hover {
+  border-color: #d9d9d9;
+  background: #fff;
+}
+
+.template-editor .module-title-input:focus {
+  border-color: #1890ff;
+  background: #fff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+}
+
+.template-editor .module-content {
+  padding: 12px 14px;
+}
+
+/* ===== 文字字段 ===== */
+.template-editor .text-field-wrapper {
+  margin-bottom: 10px;
+}
+
+.template-editor .field-label {
+  display: block;
+  font-size: 12px;
+  color: #777;
+  margin-bottom: 4px;
+}
+
+/* 可编辑的字段小标题输入框 */
+.template-editor .field-label-input {
+  display: block;
+  font-size: 12px;
+  color: #777;
+  margin-bottom: 4px;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  padding: 1px 4px;
+  background: transparent;
+  outline: none;
+  transition: all 0.2s ease;
+  width: auto;
+  min-width: 60px;
+  max-width: 200px;
+}
+
+.template-editor .field-label-input:hover {
+  border-color: #d9d9d9;
+  background: #fff;
+  color: #555;
+}
+
+.template-editor .field-label-input:focus {
+  border-color: #1890ff;
+  background: #fff;
+  color: #333;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+}
+
+.template-editor .field-input {
+  width: 100%;
+  padding: 7px 10px;
+  border: 1px solid #e8e8e8;
+  border-radius: 5px;
+  font-size: 13px;
+  color: #333;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.template-editor .field-input:hover {
+  border-color: #40a9ff;
+}
+
+.template-editor .field-input:focus {
+  outline: none;
+  border-color: #1890ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+}
+
+/* ===== 图片坑位网格 — 4列 ===== */
+.template-editor .image-slots-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* 图片坑位包装器 - 支持删除按钮定位 */
+.template-editor .image-slot-wrapper {
+  position: relative;
+}
+
+/* ===== image-group模块：添加图片按钮（作为网格内最后一项，与图片坑位等大） ===== */
+.template-editor .btn-add-image {
+  width: 100%;            /* 填满网格格子 */
+  min-height: 180px;      /* 与图片坑位最小高度接近 */
+  background: #fafafa;
+  border: 2px dashed #d9d9d9;
+  border-radius: 8px;     /* 与图片坑位圆角一致 */
+  color: #999;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+  line-height: 1.4;
+  box-sizing: border-box;
+}
+
+.template-editor .btn-add-image:hover {
+  background: #e6f7ff;
+  border-color: #1890ff;
+  color: #1890ff;
+}
+
+/* 添加图片按钮内的图标 */
+.template-editor .btn-add-image .add-icon {
+  font-size: 28px;
+  color: #bbb;
+  line-height: 1;
+}
+
+.template-editor .btn-add-image:hover .add-icon {
+  color: #1890ff;
+}
+
+/* ===== 响应式 ===== */
+@media (max-width: 1400px) {
+  .template-editor .image-slots-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 1200px) {
+  .template-editor .image-slots-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 1024px) {
+  .template-editor .sidebar-nav {
+    display: none;
+  }
+  
+  .template-editor .editor-content {
+    padding: 12px 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .template-editor .editor-header {
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px 16px;
+  }
+  
+  .template-editor .header-left,
+  .template-editor .header-actions {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .template-editor .image-slots-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===== 列表表格配对渲染样式（纵向布局：描述在上，图片在下） ===== */
+/* 每行：序号 + 描述文本框（顶部），图片网格（底部） */
+.template-editor .list-table-pairs {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.template-editor .list-table-pair-row.vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  background: #fafbfc;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  transition: box-shadow 0.2s ease;
+}
+
+.template-editor .list-table-pair-row.vertical:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+/* 顶部区域：序号 + 描述输入框（水平排列） */
+.template-editor .list-table-pair-top {
+  position: relative; /* 支持删除按钮定位 */
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+/* 序号标识 */
+.template-editor .list-table-pair-index {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #667eea;
+  color: white;
+  border-radius: 50%;
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+/* 内容区域（包含标题和描述） */
+.template-editor .list-table-pair-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* 标题输入框 */
+.template-editor .list-table-title-input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #e8e8e8;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+.template-editor .list-table-title-input:hover {
+  border-color: #40a9ff;
+}
+
+.template-editor .list-table-title-input:focus {
+  outline: none;
+  border-color: #1890ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+}
+
+/* 描述区域 */
+.template-editor .list-table-pair-desc {
+  flex: 1;
+  min-width: 0;
+}
+
+.template-editor .list-table-textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #e8e8e8;
+  border-radius: 5px;
+  font-size: 13px;
+  color: #333;
+  resize: vertical;
+  min-height: 60px;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.template-editor .list-table-textarea:hover {
+  border-color: #40a9ff;
+}
+
+.template-editor .list-table-textarea:focus {
+  outline: none;
+  border-color: #1890ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+}
+
+/* 底部图片容器网格（描述下方，水平排列） */
+.template-editor .list-table-no-desc {
+  color: #999;
+  font-size: 12px;
+  font-style: italic;
+}
+
+/* ===== 基础信息区域（所有模板固定显示）===== */
+.template-editor .basic-info-section {
+  background: white;
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.template-editor .basic-info-row {
+  display: flex;
+  gap: 16px;
+}
+
+.template-editor .basic-info-field {
+  flex: 1;
+}
+
+.template-editor .basic-info-field .field-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #555;
+  margin-bottom: 5px;
+}
+
+.template-editor .theme-name-input {
+  font-size: 14px;
+  font-weight: 500;
+  padding: 7px 12px;
+}
+
+.template-editor .version-input {
+  max-width: 180px;
+}
+
+/* ===== 添加条目按钮（统一样式）===== */
+.template-editor .list-table-add-entry-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 0;
+  margin-top: 8px;
+  background: transparent;
+  border: none;
+  color: #888;
+  font-size: 13px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  user-select: none;
+}
+
+.template-editor .list-table-add-entry-btn:hover {
+  color: #1890ff;
+}
+
+.template-editor .list-table-add-entry-btn .add-icon {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.template-editor .list-table-add-entry-btn .add-text {
+  font-size: 13px;
+}
+
+.template-editor .text-field-wrapper.extra-item {
+  position: relative;
+  padding-right: 35px;
+}
+
+.template-editor .btn-remove-item {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #ff4d4f;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.template-editor .btn-remove-item:hover {
+  opacity: 1;
+}
+
+/* ===== 拖动排序样式 ===== */
+.template-editor .nav-item-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: 2px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.template-editor .nav-item-wrapper.dragging {
+  opacity: 0.5;
+  background: #e3f2fd;
+}
+
+.template-editor .nav-item-wrapper.drag-over {
+  border-top: 2px solid #1890ff;
+}
+
+.template-editor .nav-item-wrapper .nav-item {
+  flex: 1;
+  cursor: pointer;
+}
+
+/* 导航栏可编辑标题容器 - 与 .nav-item 保持相同的 padding 和高度 */
+.template-editor .nav-item-editable {
+  display: flex;
+  align-items: center;
+  padding: 8px 14px !important;
+  border-left: 3px solid transparent;
+}
+
+/* 导航栏标题输入框（双击进入编辑态时显示） */
+.template-editor .nav-title-input {
+  width: 100%;
+  border: 1px solid #1890ff;
+  border-radius: 3px;
+  /* padding + border 抵消，保持与纯文本行高一致 */
+  padding: 0 3px;
+  margin: -1px 0;
+  font-size: 13px;
+  line-height: inherit;
+  color: #333;
+  background: #fff;
+  outline: none;
+  min-width: 0;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+  box-sizing: border-box;
+}
+
+/* 拖动手柄 - 点状图标样式 */
+.template-editor .drag-handle {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 20px;
+  height: 100%;
+  min-height: 32px;
+  margin-right: 4px;
+  cursor: grab;
+  user-select: none;
+  /* 使用伪元素创建点状图标 */
+  gap: 2px;
+}
+
+/* 模块标题区域的拖动手柄 */
+.template-editor .module-drag-handle {
+  width: 16px;
+  min-height: 24px;
+  margin-right: 8px;
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
+}
+
+.template-editor .module-header:hover .module-drag-handle {
+  opacity: 1;
+}
+
+/* 整个标题栏可拖拽时的光标和交互样式 */
+.template-editor .module-header-draggable {
+  cursor: grab;
+  user-select: none;
+}
+
+.template-editor .module-header-draggable:active {
+  cursor: grabbing;
+}
+
+/* 右侧内容区：拖拽中的容器半透明 */
+.template-editor .module-section.section-dragging {
+  opacity: 0.4;
+}
+
+/* 右侧内容区：拖拽悬停目标的高亮提示 */
+.template-editor .module-section.section-drag-over {
+  outline: 2px dashed #6c5ce7;
+  outline-offset: -2px;
+  background: #f8f7ff;
+}
+
+.template-editor .drag-handle::before,
+.template-editor .drag-handle::after {
+  content: '';
+  display: block;
+  width: 4px;
+  height: 4px;
+  background: #999;
+  border-radius: 50%;
+}
+
+.template-editor .drag-handle:hover::before,
+.template-editor .drag-handle:hover::after {
+  background: #1890ff;
+}
+
+.template-editor .drag-handle:active {
+  cursor: grabbing;
+}
+
+.template-editor .nav-item-delete {
+  position: absolute;
+  right: 4px;
+  width: 18px;
+  height: 18px;
+  border: none;
+  background: transparent;
+  color: #999;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 50%;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.template-editor .nav-item-wrapper:hover .nav-item-delete {
+  display: flex;
+}
+
+.template-editor .nav-item-delete:hover {
+  background: #ff4d4f;
+  color: white;
+}
+
+/* ===== 添加容器样式 ===== */
+.template-editor .add-container-wrapper {
+  position: relative;
+  margin-top: auto;
+  padding: 8px 8px 0;
+  flex-shrink: 0;
+}
+
+.template-editor .add-container-btn {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px dashed #d9d9d9;
+  border-radius: 4px;
+  background: transparent;
+  color: #666;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.template-editor .add-container-btn:hover {
+  border-color: #1890ff;
+  color: #1890ff;
+}
+
+.template-editor .add-container-menu {
+  position: absolute;
+  bottom: 100%;
+  left: 8px;
+  right: 8px;
+  background: white;
+  border: 1px solid #e8e8e8;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+  margin-bottom: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.template-editor .add-container-menu button {
+  display: block;
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  background: transparent;
+  text-align: left;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.template-editor .add-container-menu button:hover {
+  background: #f5f5f5;
+}
+
+.template-editor .add-container-menu button:not(:last-child) {
+  border-bottom: 1px solid #f0f0f0;
+}

@@ -1,0 +1,794 @@
+/* =============================================
+   文档预览样式 - 对照原稿深色游戏风格
+   背景：深蓝黑 #0f1923，章节标题：红色 #e8384a
+   ============================================= */
+
+/* ---- 模态框遮罩 ---- */
+.preview-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+}
+
+.preview-modal-content {
+  /* 外框宽度跟随内容自适应展开，避免图片区被固定宽度压缩 */
+  width: max-content;
+  max-height: 94vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+  /* 主背景色 */
+  background: #0f1923;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6);
+}
+
+/* 模态框顶部工具栏 */
+.preview-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 24px;
+  background: #141824;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.preview-modal-header h2 {
+  margin: 0;
+  font-size: 16px;
+  color: #ffffff;
+}
+
+.preview-modal-header p {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.preview-close-btn {
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.preview-close-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+.preview-modal-body {
+  flex: 1;
+  overflow: auto;
+  background: #0f1923;
+}
+
+/* 模态框底部按钮 */
+.preview-modal-footer {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px 24px;
+  background: #141824;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.btn-print,
+.btn-close-preview {
+  min-width: 120px;
+  height: 40px;
+  padding: 0 20px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-print {
+  color: #ffffff;
+  border: none;
+  background: #e8384a;
+}
+
+.btn-print:hover {
+  background: #c8293a;
+}
+
+.btn-close-preview {
+  color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: transparent;
+}
+
+.btn-close-preview:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* =============================================
+   文档主体容器
+   ============================================= */
+.document-preview {
+  /* 文档宽度跟随内容展开，同时保留基础版心宽度 */
+  width: max-content;
+  min-width: 780px;
+  margin: 0 auto;
+  padding-bottom: 0;
+  /* 主背景色改为 #0f1923 */
+  background: #0f1923;
+  font-family: 'PingFang SC', 'Microsoft YaHei', -apple-system, sans-serif;
+  color: #ffffff;
+}
+
+.document-preview.modal-mode {
+  /* 弹窗预览态同样按内容宽度自适应 */
+  width: max-content;
+  min-width: 780px;
+  margin: 0;
+}
+
+/* =============================================
+   文档头部：红底横条 + 版本号居左 + 大标题居中
+   ============================================= */
+.preview-header {
+  /* 红底顶部横条 */
+  padding: 0;
+  text-align: center;
+  border-bottom: none;
+  background: transparent;
+}
+
+/* 顶部红底横条：版本号居左，与标题共用同一红底区域 */
+.preview-chip-row {
+  display: flex;
+  justify-content: flex-start; /* 居左 */
+  align-items: center;
+  gap: 8px;
+  /* 只保留顶部和左右内边距，底部不留空，与标题紧贴 */
+  padding: 16px 40px 0;
+  margin-bottom: 0;
+  background: #e8384a;
+}
+.preview-chip {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 2px;
+  /* 红底上的版本号：白色半透明背景 */
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+}
+
+/* 主版本号 chip（红底上不需要特殊处理） */
+.preview-chip-primary {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+.preview-header-main {
+  /* 标题区与版本号同在红底内，紧接版本号下方 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  /* 红底延伸到标题区，顶部间距缩小让版本号与标题更近 */
+  padding: 8px 40px 24px;
+  background: #e8384a;
+}
+
+.preview-title-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+/* 小眉头文字隐藏（原稿无此元素） */
+.preview-eyebrow {
+  display: none;
+}
+
+/* 大标题：白色粗体，对照原稿字号 */
+.preview-main-title {
+  margin: 0;
+  font-size: clamp(28px, 5vw, 42px);
+  line-height: 1.15;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #ffffff;
+  text-align: center;
+}
+
+.preview-title-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+/* 版本号标签 */
+.preview-version {
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 2px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+}
+
+.preview-description {
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 13px;
+}
+
+.preview-tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.preview-tag {
+  padding: 4px 10px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 11px;
+}
+
+/* 右侧 meta 卡片区（原稿无，隐藏） */
+.preview-meta-grid {
+  display: none;
+}
+
+/* 摘要条（原稿无，隐藏） */
+.preview-summary-strip {
+  display: none;
+}
+
+/* =============================================
+   文档主体
+   ============================================= */
+.preview-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0 40px;
+  background: transparent;
+}
+
+/* ---- 模块（章节）---- */
+.preview-module {
+  /* 章节之间用间距分隔，无卡片边框 */
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  overflow: visible;
+  box-shadow: none;
+  padding: 20px 0 8px;
+}
+
+/* 章节头部：红色标题 */
+.preview-module-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 0 10px;
+  background: transparent;
+  border-bottom: none;
+  /* 覆盖原来的 grid 布局 */
+  grid-template-columns: unset;
+}
+
+/* 左侧红色竖线装饰 */
+.preview-module-accent {
+  width: 4px;
+  height: 22px;
+  border-radius: 2px;
+  flex-shrink: 0;
+  /* 颜色由 JS inline style 控制，这里给默认红色 */
+  background: #e8384a !important;
+}
+
+/* 章节序号隐藏（原稿无序号） */
+.preview-module-index {
+  display: none;
+}
+
+.preview-module-heading {
+  min-width: 0;
+}
+
+/* 章节标题：红色，对照原稿 */
+.preview-module-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #e8384a;
+  line-height: 1.3;
+}
+
+/* 章节副标题隐藏（原稿无副标题） */
+.preview-module-subtitle {
+  display: none;
+}
+
+.preview-module-content {
+  padding: 10px 0 12px 14px;
+}
+
+/* 小节标题（如"设计参考图"等）：预览中不显示 */
+.preview-section-caption {
+  display: none;
+}
+
+/* =============================================
+   整体印象模块：要点列表
+   对照原稿：• 要点文字，无卡片背景
+   ============================================= */
+.preview-overall-panel {
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  border: none;
+}
+
+.preview-overall-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.preview-overall-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  border: none;
+}
+
+.preview-overall-text {
+  font-size: 14px;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* =============================================
+   文字字段卡片（描述类）
+   ============================================= */
+.preview-field-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.preview-field-card {
+  min-height: unset;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  border: none;
+}
+
+/* 字段标签（如"徽章描述"等）：预览中不显示 */
+.preview-field-label {
+  display: none; /* 隐藏系统默认描述文字 */
+}
+
+.preview-field-value {
+  font-size: 14px;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.85);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* =============================================
+   图片区域
+   对照原稿：图片依次横向排列，不自动换行
+   ============================================= */
+.preview-image-section {
+  margin-top: 14px;
+}
+
+/* 表格布局（列表表格） */
+.preview-image-table {
+  /* 宽度自适应内容，不固定100%，跟随列表长度和图片宽度变化 */
+  width: auto;
+  border-collapse: collapse;
+  margin-top: 8px;
+  /* 表格外边框 */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.preview-image-table th,
+.preview-image-table td {
+  /* 单元格边框 */
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 12px 16px;
+  text-align: left;
+}
+
+.preview-image-table th {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.preview-table-desc {
+  /* 描述列最小宽度，不限制最大宽度 */
+  min-width: 200px;
+  vertical-align: top;
+}
+
+.preview-table-seq {
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.preview-table-text {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 13px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.preview-table-img {
+  vertical-align: middle;
+}
+
+/* 列表表格图片容器：flex布局，自动换行 */
+.preview-table-img-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+/* 图片：保持原始尺寸比例，限制最大高度 */
+.preview-table-img-frame img {
+  display: block;
+  border-radius: 4px;
+}
+
+/* 暂无图片占位文本 */
+.preview-table-no-img {
+  display: inline-block;
+  padding: 20px 16px;
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 12px;
+  font-style: italic;
+}
+
+.preview-images-grid {
+  /* 单行横向铺开，不显示滚动条，由外层宽度自适应承载 */
+  display: inline-flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  gap: 12px;
+  /* 移除 overflow: visible，避免 html2canvas 渲染问题 */
+  width: max-content;
+}
+
+/* 标准图：固定高度，宽度自适应 */
+.preview-images-grid.layout-standard .preview-image-item {
+  flex: 0 0 auto;
+}
+.preview-images-grid.layout-standard .preview-image-frame {
+  height: 280px;
+  width: auto;
+}
+
+/* 参考图：固定高度，宽度自适应 */
+.preview-images-grid.layout-reference .preview-image-item {
+  flex: 0 0 auto;
+}
+.preview-images-grid.layout-reference .preview-image-frame {
+  height: 240px;
+  width: auto;
+}
+
+/* 界面效果图：固定高度，宽度自适应 */
+.preview-images-grid.layout-wide .preview-image-item {
+  flex: 0 0 auto;
+}
+.preview-images-grid.layout-wide .preview-image-frame {
+  height: 400px;
+  width: auto;
+}
+
+/* 图标效果图：固定高度，宽度自适应 */
+.preview-images-grid.layout-icon .preview-image-item {
+  flex: 0 0 auto;
+}
+.preview-images-grid.layout-icon .preview-image-frame {
+  height: 240px;
+  width: auto;
+}
+
+.preview-image-item {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* 图片容器：高度由各 layout 指定，宽度自适应 */
+.preview-image-frame {
+  position: relative;
+  flex: none;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: inline-block; /* 改为 inline-block，确保宽度由内容（图片）决定 */
+  text-align: center;
+  /* 移除 overflow: hidden，避免 html2canvas 渲染问题 */
+}
+
+/* 图片：高度撑满容器，宽度按比例自适应 */
+.preview-image-frame img {
+  height: 100%;
+  width: auto;
+  display: block;
+  margin: 0 auto; /* 居中显示 */
+  /* 移除 object-fit: contain，因为 html2canvas 对其支持不好，
+     且我们已经通过 height: 100% 和 width: auto 保证了比例 */
+}
+
+.preview-image-caption {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+/* 序号标签 */
+.preview-image-seq {
+  display: none;
+}
+
+.preview-image-label {
+  font-size: 12px;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.4);
+  word-break: break-word;
+}
+
+/* =============================================
+   空状态
+   ============================================= */
+.preview-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 300px;
+  padding: 48px 24px;
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+  background: transparent;
+  text-align: center;
+}
+
+.preview-empty-icon {
+  font-size: 36px;
+  opacity: 0.5;
+}
+
+.preview-empty-state h3 {
+  margin: 0;
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.preview-empty-state p {
+  max-width: 400px;
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+/* =============================================
+   附录 - 合规性要求
+   对照原稿：白色标题，正文浅色
+   ============================================= */
+.preview-appendix {
+  margin: 20px 40px 0;
+  padding: 20px 0 16px;
+  border-radius: 0;
+  background: transparent;
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.preview-appendix-header {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.appendix-icon {
+  display: none;
+}
+
+.appendix-title {
+  display: block;
+  font-size: 16px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.appendix-subtitle {
+  display: none;
+}
+
+.preview-appendix-content {
+  font-size: 13px;
+  line-height: 1.9;
+  color: rgba(255, 255, 255, 0.6);
+  padding-left: 0;
+}
+
+.preview-appendix-content p {
+  margin: 0 0 6px;
+}
+
+.warning-text {
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 400;
+}
+
+/* 合规禁止图标区域 */
+.preview-appendix-images {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+/* 固定内置合规示例图 */
+.compliance-examples-img {
+  display: block;
+  margin-top: 12px;
+  max-width: 100%;
+  border-radius: 4px;
+}
+
+/* =============================================
+   底部：保密项目 · 禁止外传
+   对照原稿：红底横条，居中白色文字
+   ============================================= */
+.preview-footer {
+  margin-top: 24px;
+  padding: 14px 40px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  color: #ffffff;
+  /* 红底横条，与顶部呼应 */
+  background: #e8384a;
+  border-top: none;
+}
+
+/* =============================================
+   打印样式
+   ============================================= */
+@media print {
+  .preview-modal-overlay {
+    position: static;
+    display: block;
+    padding: 0;
+    background: transparent;
+    backdrop-filter: none;
+  }
+
+  .preview-modal-content {
+    width: 100%;
+    max-height: none;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    background: #0f1923;
+  }
+
+  .preview-modal-header,
+  .preview-modal-footer {
+    display: none;
+  }
+
+  .preview-modal-body {
+    overflow: visible;
+    background: #0f1923;
+  }
+
+  .document-preview {
+    width: 100%;
+    margin: 0;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .preview-module,
+  .preview-appendix {
+    break-inside: avoid;
+  }
+}
+
+/* =============================================
+   响应式
+   ============================================= */
+@media (max-width: 768px) {
+  .preview-modal-content {
+    width: 100vw;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+
+  .document-preview {
+    width: 100%;
+    margin: 0;
+  }
+
+  .preview-header,
+  .preview-body,
+  .preview-appendix,
+  .preview-footer {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .preview-images-grid.layout-standard .preview-image-frame {
+    height: 240px; /* 小屏高度缩小 */
+  }
+
+  .preview-images-grid.layout-reference .preview-image-frame {
+    height: 200px; /* 小屏高度缩小 */
+  }
+
+  .preview-images-grid.layout-icon .preview-image-frame {
+    height: 200px; /* 小屏高度缩小 */
+  }
+
+  .preview-images-grid.layout-wide .preview-image-frame {
+    height: 300px; /* 小屏高度缩小 */
+  }
+}

@@ -1,0 +1,90 @@
+.text-field-editor {
+  margin-bottom: 20px;
+}
+
+.text-field-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.text-field-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.required-mark {
+  color: #ff4d4f;
+  margin-left: 4px;
+}
+
+.char-counter {
+  font-size: 12px;
+  color: #999;
+}
+
+.text-field-body {
+  width: 100%;
+}
+
+.text-field-input,
+.text-field-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #333;
+  transition: all 0.3s ease;
+  background: #fff;
+}
+
+.text-field-input:hover,
+.text-field-textarea:hover {
+  border-color: #40a9ff;
+}
+
+.text-field-input:focus,
+.text-field-textarea:focus {
+  outline: none;
+  border-color: #1890ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+.text-field-input::placeholder,
+.text-field-textarea::placeholder {
+  color: #bfbfbf;
+}
+
+.text-field-textarea {
+  resize: vertical;
+  min-height: 80px;
+  font-family: inherit;
+}
+
+.text-field-footer {
+  margin-top: 4px;
+}
+
+.field-hint {
+  font-size: 12px;
+  color: #999;
+}
+
+/* 深色主题支持 */
+.dark-theme .text-field-editor {
+  background: #1f1f1f;
+}
+
+.dark-theme .text-field-input,
+.dark-theme .text-field-textarea {
+  background: #2d2d2d;
+  border-color: #434343;
+  color: #fff;
+}
+
+.dark-theme .text-field-label {
+  color: #d9d9d9;
+}

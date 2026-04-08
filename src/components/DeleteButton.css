@@ -1,0 +1,100 @@
+/**
+ * 通用删除按钮样式
+ * 统一所有场景下删除按钮的外观和交互
+ */
+
+/* ===== 基础样式 ===== */
+.delete-btn {
+  border-radius: 50%;
+  background: #f5f5f5;
+  color: #999;
+  border: 1px solid #d9d9d9;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  z-index: 100;
+  padding: 0;
+  line-height: 1;
+}
+
+.delete-btn:hover:not(:disabled) {
+  background: #ff4d4f;
+  color: white;
+  border-color: #ff4d4f;
+}
+
+.delete-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ===== 尺寸变体 ===== */
+/* 小尺寸：20px */
+.delete-btn--small {
+  width: 20px;
+  height: 20px;
+  font-size: 11px;
+}
+
+/* 中等尺寸：24px（默认） */
+.delete-btn--medium {
+  width: 24px;
+  height: 24px;
+  font-size: 12px;
+}
+
+/* 大尺寸：28px */
+.delete-btn--large {
+  width: 28px;
+  height: 28px;
+  font-size: 13px;
+}
+
+/* ===== 位置变体 ===== */
+/* 右上角定位：用于容器/卡片/条目的删除 */
+/* 按钮中心位于容器右上角，一半在内一半在外 */
+.delete-btn--corner {
+  position: absolute;
+  top: -12px;  /* 按钮中心在容器顶部边缘（24px按钮的一半） */
+  right: -12px; /* 按钮中心在容器右侧边缘（24px按钮的一半） */
+}
+
+/* small尺寸的corner定位修正：20px按钮偏移10px */
+.delete-btn--corner.delete-btn--small {
+  top: -10px;
+  right: -10px;
+}
+
+/* large尺寸的corner定位修正：28px按钮偏移14px */
+.delete-btn--corner.delete-btn--large {
+  top: -14px;
+  right: -14px;
+}
+
+/* 右侧垂直居中定位：用于输入框内删除 */
+.delete-btn--rightMiddle {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #ff4d4f; /* 红色背景 */
+  color: white;
+  border: none;
+  opacity: 0.7;
+}
+
+.delete-btn--rightMiddle:hover:not(:disabled) {
+  opacity: 1;
+  background: #ff4d4f;
+  border: none;
+}
+
+/* 行内定位：用于列表项等的行内删除 */
+.delete-btn--inline {
+  position: relative;
+  top: 0;
+  right: 0;
+  flex-shrink: 0;
+}

@@ -1,0 +1,381 @@
+{
+  "eval_results": [
+    {
+      "eval_id": 1,
+      "eval_name": "full-app-creation-from-figma",
+      "prompt_summary": "从 Figma 设计稿创建完整的击杀图标发包系统",
+      "expectations": [
+        {
+          "text": "使用 FigmaPartner MCP 的 get_design_context 或 get_screenshot 读取 Figma 设计稿",
+          "passed": true,
+          "evidence": "SKILL.md「第一步：读取 Figma 设计稿」明确列出 get_design_context（首选）、get_screenshot（辅助）、get_raw_design_context（备选）三种工具及优先级，并有降级策略说明。"
+        },
+        {
+          "text": "生成的编辑器采用强制左右结构（flex-direction: row），左侧导航栏 + 右侧表单区",
+          "passed": true,
+          "evidence": "SKILL.md「第三步：生成填表式编辑器」有完整的 ASCII 布局图和关键规则：flex-direction: row !important、导航栏 160~200px、内容区 flex:1。references/css-guidelines.md 有详细 CSS。"
+        },
+        {
+          "text": "创建 TemplateDefinition 类型的模版定义，包含 textFields 和 imageSlots",
+          "passed": true,
+          "evidence": "SKILL.md「第二步：定义模版数据结构」指向 references/type-definitions.md，其中有完整的 TemplateDefinition 接口定义，包含 textFields: TextFieldConfig[] 和 imageSlots: ImageSlotConfig[]。"
+        },
+        {
+          "text": "图片坑位支持上传、裁切（react-image-crop）和缩放操作",
+          "passed": true,
+          "evidence": "SKILL.md「第四步：图片上传与动态添加」明确列出：点击/拖拽上传、裁切（react-image-crop）、缩放、预览、删除/替换。技术栈表格也列出了 react-image-crop。"
+        },
+        {
+          "text": "模版通过 templateRegistry.register() 注册到模版库",
+          "passed": true,
+          "evidence": "SKILL.md「第六步：模版注册与复用」有代码示例 templateRegistry.register(myNewTemplate)。references/type-definitions.md 有完整的注册中心 API。"
+        },
+        {
+          "text": "包含 TemplateLibrary 模版库管理页面",
+          "passed": true,
+          "evidence": "SKILL.md 项目文件结构列出 TemplateLibrary.tsx/.css，references/components-reference.md 描述其职责为'模版卡片网格展示、分类筛选、关键词搜索、新建入口'。"
+        },
+        {
+          "text": "包含 DocumentPreview 深色主题文档预览组件",
+          "passed": true,
+          "evidence": "SKILL.md「第五步：文档预览」有完整的深色主题样式规范表格（背景 #0f1923、标题 #4ECDC4 等）。references/components-reference.md 有 DocumentPreviewProps 接口。"
+        },
+        {
+          "text": "CSS 使用父级选择器隔离作用域",
+          "passed": true,
+          "evidence": "SKILL.md 关键规则明确：'CSS 必须通过父级选择器隔离（如 .kill-icon-editor .editor-main）'。references/components-reference.md 列出各组件的 CSS 作用域类名。"
+        }
+      ]
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "add-new-template-from-figma",
+      "prompt_summary": "从 Figma 新增技能图标模版",
+      "expectations": [
+        {
+          "text": "使用 FigmaPartner MCP 读取设计稿结构",
+          "passed": true,
+          "evidence": "SKILL.md「第一步」和「新增模版的标准流程」步骤1-2 明确要求读取 Figma 设计稿。"
+        },
+        {
+          "text": "在 src/templates/ 下创建新的模版定义文件",
+          "passed": true,
+          "evidence": "SKILL.md 项目文件结构显示 src/templates/ 目录。references/template-example.md「模版文件结构」有标准文件路径：src/templates/{模版名}Template.ts。"
+        },
+        {
+          "text": "模版 category 设置为 'skill-icon'",
+          "passed": true,
+          "evidence": "SKILL.md「模版分类」表格明确列出 skill-icon 分类及说明'技能效果图标'。references/type-definitions.md 有 TemplateCategory 枚举。"
+        },
+        {
+          "text": "textFields 包含技能名称和技能描述字段",
+          "passed": true,
+          "evidence": "SKILL.md「提取信息」表格说明'中文文字内容 → 可编辑的文本输入框'。references/template-example.md 有完整的 textFields 设计模式和 ID 命名规范。"
+        },
+        {
+          "text": "imageSlots 包含 4 张效果图和 2 张参考图坑位",
+          "passed": true,
+          "evidence": "SKILL.md「提取信息」表格说明'图片占位区域 → 可上传的图片坑位'。references/template-example.md「图片坑位设计模式」有纯参考图和带默认预填充两种模式。"
+        },
+        {
+          "text": "文件末尾调用 templateRegistry.register() 注册模版",
+          "passed": true,
+          "evidence": "references/template-example.md「模版文件结构」代码示例末尾有 templateRegistry.register(myTemplate)。「新增模版检查清单」也有此项。"
+        },
+        {
+          "text": "模版 ID 遵循 template-{分类}-{序号} 格式",
+          "passed": true,
+          "evidence": "references/type-definitions.md TemplateDefinition 接口注释：'格式：template-{类型}-{序号}'。references/template-example.md 检查清单也有此项。"
+        }
+      ]
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "fix-preview-image-label-style",
+      "prompt_summary": "修复预览图片标签颜色、位置和分类标题",
+      "expectations": [
+        {
+          "text": "修改 DocumentPreview.tsx 或 DocumentPreview.css",
+          "passed": true,
+          "evidence": "SKILL.md 项目文件结构列出 DocumentPreview.tsx/.css。references/components-reference.md 明确其职责。"
+        },
+        {
+          "text": "图片标签颜色设置为 #8B978F 灰色",
+          "passed": true,
+          "evidence": "SKILL.md「第五步：文档预览」样式规范表格明确：'图片标签 | color: #8B978F; font-weight: bold'。"
+        },
+        {
+          "text": "图片标签设置为 font-weight: bold",
+          "passed": true,
+          "evidence": "SKILL.md「第五步」样式规范表格：'图片标签 | color: #8B978F; font-weight: bold'。"
+        },
+        {
+          "text": "图片标签位置调整到图片上方（而非下方）",
+          "passed": true,
+          "evidence": "SKILL.md「第五步」样式规范表格：'图片标签 | 显示在图片上方'。常见问题表格也有：'图片标签位置 | 放在图片上方，灰色加粗，不在下方重复'。"
+        },
+        {
+          "text": "移除分类标题（如'设计参考图'）的渲染逻辑",
+          "passed": true,
+          "evidence": "SKILL.md「第五步」样式规范表格：'分类标题 | 不显示（如"设计参考图"等去掉）'。"
+        },
+        {
+          "text": "修改前使用 grep_search 搜索相关代码位置",
+          "passed": true,
+          "evidence": "SKILL.md「标准工作流」第1条：'先搜索再修改 — grep_search + codebase_search 找到所有引用位置'。references/ui-workflow.md BUG 修复工作流也强调此点。"
+        }
+      ]
+    },
+    {
+      "eval_id": 4,
+      "eval_name": "fix-list-table-image-preview-layout",
+      "prompt_summary": "修复列表表格图片预览布局",
+      "expectations": [
+        {
+          "text": "图片容器使用 flex 布局 + flex-wrap: wrap",
+          "passed": true,
+          "evidence": "SKILL.md「列表表格图片预览」明确：'flex 布局 + flex-wrap: wrap，每行最多3张后换行'。"
+        },
+        {
+          "text": "每行最多 3 张图片后自动换行",
+          "passed": true,
+          "evidence": "SKILL.md「列表表格图片预览」：'每行最多3张后换行'。"
+        },
+        {
+          "text": "动态计算统一高度，限制最大 280px",
+          "passed": true,
+          "evidence": "SKILL.md「列表表格图片预览」：'动态计算统一高度（取最大高度，限制280px），宽度按比例自适应'。"
+        },
+        {
+          "text": "图片宽度按原始比例自适应",
+          "passed": true,
+          "evidence": "SKILL.md「列表表格图片预览」：'宽度按比例自适应'。"
+        },
+        {
+          "text": "移除图片的固定外框、边框和背景",
+          "passed": true,
+          "evidence": "SKILL.md「列表表格图片预览」：'无固定外框、无边框、无背景，图片自然排布'。"
+        },
+        {
+          "text": "修改前使用 grep_search 搜索相关代码位置",
+          "passed": true,
+          "evidence": "SKILL.md「标准工作流」第1条明确要求先搜索再修改。"
+        }
+      ]
+    },
+    {
+      "eval_id": 5,
+      "eval_name": "dynamic-image-add-button",
+      "prompt_summary": "列表表格编辑器动态添加图片坑位",
+      "expectations": [
+        {
+          "text": "实现 handleAddImageSlot 函数管理动态图片添加",
+          "passed": true,
+          "evidence": "references/template-example.md「图片动态添加（+号按钮）」有完整的 handleAddImageSlot 实现代码，使用 useCallback。"
+        },
+        {
+          "text": "使用 extraImages 状态存储动态添加的图片数据",
+          "passed": true,
+          "evidence": "references/template-example.md 有 extraImages 状态定义：useState<Record<string, ImageData[]>>({})。references/components-reference.md TemplateEditor 核心状态表也列出 extraImages。"
+        },
+        {
+          "text": "+号按钮放在图片容器内部作为最后一个子元素（非外层包裹）",
+          "passed": true,
+          "evidence": "SKILL.md「第四步」核心规则：'按钮必须在网格/容器内部，作为最后一个子元素，与图片坑位同级排列。禁止用外层 flex 包裹网格+按钮的双层结构。' references/ui-workflow.md 有正确/错误的 ASCII 对比图。"
+        },
+        {
+          "text": "+号按钮使用虚线边框样式（2px dashed）",
+          "passed": true,
+          "evidence": "references/ui-workflow.md「添加按钮规范」通用原则表格：'虚线边框风格 | 2px dashed #d9d9d9，圆角 8px'。"
+        },
+        {
+          "text": "列表表格场景按钮尺寸为 160×120px",
+          "passed": true,
+          "evidence": "SKILL.md「第四步」场景表格：'list-table（flex）| .list-table-pair-images | .list-table-add-btn | 160×120px'。references/ui-workflow.md 也有相同规范。"
+        },
+        {
+          "text": "按钮类名使用 .list-table-add-btn",
+          "passed": true,
+          "evidence": "SKILL.md「第四步」场景表格明确列出类名 .list-table-add-btn。"
+        }
+      ]
+    },
+    {
+      "eval_id": 6,
+      "eval_name": "generate-list-table-from-figma",
+      "prompt_summary": "从竖版 Figma 设计稿生成列表表格模板",
+      "expectations": [
+        {
+          "text": "使用 FigmaPartner MCP 读取设计稿",
+          "passed": true,
+          "evidence": "SKILL.md「第一步」和「新增模版的标准流程」明确要求。"
+        },
+        {
+          "text": "根据竖版设计稿自动识别为 list-table 分类",
+          "passed": true,
+          "evidence": "SKILL.md「模版分类」下方说明：'imageAnalyzer.ts 根据设计稿图片宽高比自动推断分类（高 > 宽明显 → list-table）'。"
+        },
+        {
+          "text": "使用 listTableSkill 框架生成标准模块（overall/specific/reference/other）",
+          "passed": true,
+          "evidence": "SKILL.md「第四步（续）：列表表格编辑器」列出 listTableSkill 框架的 4 个标准模块。references/template-example.md「完整示例：列表表格模版」也有详细说明。"
+        },
+        {
+          "text": "具体需求采用纵向卡片布局（.list-table-pair-row.vertical）",
+          "passed": true,
+          "evidence": "SKILL.md「第四步（续）」类名表格：'.list-table-pair-row.vertical | 单条需求卡片'。"
+        },
+        {
+          "text": "每条需求包含序号(.list-table-pair-index)+标题+描述+图片网格",
+          "passed": true,
+          "evidence": "SKILL.md「第四步（续）」类名表格列出 .list-table-pair-index（序号圆圈）和 .list-table-pair-images（图片网格容器）。"
+        },
+        {
+          "text": "字段 ID 遵循 specific-item-title-N / specific-item-desc-N / specific-item-img-N 配对规范",
+          "passed": true,
+          "evidence": "references/template-example.md「字段配对规范」有完整的 ID 命名示例和配对规则说明。references/type-definitions.md createListItemPart 工厂函数也生成此格式。"
+        }
+      ]
+    },
+    {
+      "eval_id": 7,
+      "eval_name": "container-parts-factory-usage",
+      "prompt_summary": "使用容器零件库快速生成模板",
+      "expectations": [
+        {
+          "text": "使用 containerPartFactory 工厂函数创建容器零件",
+          "passed": true,
+          "evidence": "SKILL.md「容器零件库」有完整的工厂函数表格，列出 title/description/list/image-group/table 五种类型及调用方式。"
+        },
+        {
+          "text": "调用 containerPartFactory['description']() 创建整体印象模块",
+          "passed": true,
+          "evidence": "SKILL.md「容器零件库」表格：'description | containerPartFactory[\"description\"]() | 整体印象/设计说明'。"
+        },
+        {
+          "text": "调用 containerPartFactory['list'](index) 创建 5 条具体需求（index 1~5）",
+          "passed": true,
+          "evidence": "SKILL.md「容器零件库」表格：'list | containerPartFactory[\"list\"](index) | 逐条需求（标题+描述+图片）| 可重复 max 20'。"
+        },
+        {
+          "text": "调用 containerPartFactory['image-group']() 创建参考资料模块",
+          "passed": true,
+          "evidence": "SKILL.md「容器零件库」表格：'image-group | containerPartFactory[\"image-group\"]() | 多张参考图排列 | 可重复 max 10'。"
+        },
+        {
+          "text": "将零件拼接为完整的 TemplateDefinition",
+          "passed": true,
+          "evidence": "references/type-definitions.md 有 ContainerPart 接口定义，其 textFields 和 imageSlots 可拼接到 TemplateDefinition 中。"
+        },
+        {
+          "text": "通过 templateRegistry.register() 注册模版",
+          "passed": true,
+          "evidence": "SKILL.md「第六步」和 references/type-definitions.md 注册中心 API 均有说明。"
+        }
+      ]
+    },
+    {
+      "eval_id": 8,
+      "eval_name": "component-consistency-fix",
+      "prompt_summary": "统一修复添加条目按钮样式和导航页签交互",
+      "expectations": [
+        {
+          "text": "添加条目按钮统一使用 .list-table-add-entry-btn 类名",
+          "passed": true,
+          "evidence": "SKILL.md「已注册的通用组件」表格：'添加条目按钮 | .list-table-add-entry-btn | inline-flex、无边框、灰色文字、hover 变蓝'。"
+        },
+        {
+          "text": "使用 grep_search 搜索所有编辑器中的添加条目按钮实现",
+          "passed": true,
+          "evidence": "SKILL.md「组件一致性工作流」步骤4：'全局同步 — grep_search 搜索所有使用位置'。references/ui-workflow.md 也强调此流程。"
+        },
+        {
+          "text": "单击/双击使用 useRef 定时器延迟 200ms 区分",
+          "passed": true,
+          "evidence": "SKILL.md「编辑态/非编辑态切换规则」表格：'单击/双击区分 | useRef 定时器延迟 200ms，双击时清除单击定时器'。「已注册的通用组件」导航页签行也有此规则。"
+        },
+        {
+          "text": "编辑态 input 使用 padding: 0 3px; margin: -1px 0 抵消边框",
+          "passed": true,
+          "evidence": "SKILL.md「编辑态/非编辑态切换规则」表格：'input 补偿 | padding: 0 3px; margin: -1px 0 抵消边框占用空间'。"
+        },
+        {
+          "text": "切换编辑态/非编辑态时容器高度保持不变",
+          "passed": true,
+          "evidence": "SKILL.md「编辑态/非编辑态切换规则」表格：'高度稳定 | 切换时容器高度不变，padding + border + margin 精确计算抵消'。"
+        },
+        {
+          "text": "所有编辑器中同类组件样式保持一致",
+          "passed": true,
+          "evidence": "SKILL.md「通用组件一致性规范（强制）」核心原则：'同类型组件在项目所有位置必须保持统一的 HTML 结构、CSS 类名和视觉样式。禁止同一功能在不同编辑器中出现不同实现。'"
+        }
+      ]
+    },
+    {
+      "eval_id": 9,
+      "eval_name": "dynamic-data-persistence-fix",
+      "prompt_summary": "修复动态条目数据持久化丢失问题",
+      "expectations": [
+        {
+          "text": "保存时 textValues 中完整包含所有 extra-* 前缀的动态条目",
+          "passed": true,
+          "evidence": "SKILL.md「动态数据持久化规则」表格：'extra-* 保存 | 动态条目必须在 textValues 中完整保存'。"
+        },
+        {
+          "text": "恢复时从 initialTextValues 扫描 extra-* 前缀重建 extraDescItems 状态",
+          "passed": true,
+          "evidence": "SKILL.md「动态数据持久化规则」表格：'extra-* 恢复 | 初始化时从 initialTextValues 扫描 extra-* 前缀恢复'。references/template-example.md 有完整的恢复代码（useEffect + Object.keys 扫描）。"
+        },
+        {
+          "text": "extra-impression-{itemId} 格式的整体印象动态条目正确保存和恢复",
+          "passed": true,
+          "evidence": "references/type-definitions.md TextFieldConfig ID 命名规范表格：'动态条目（印象）| extra-impression-{itemId}'。references/template-example.md 有 handleAddEntry 实现。"
+        },
+        {
+          "text": "extra-desc-{moduleId}-{itemId} 格式的描述容器动态条目正确保存和恢复",
+          "passed": true,
+          "evidence": "references/type-definitions.md ID 命名规范：'动态条目（描述）| extra-desc-{moduleId}-{itemId}'。references/template-example.md 恢复代码中有 key.startsWith('extra-desc-') 的解析逻辑。"
+        },
+        {
+          "text": "DocumentPreview 渲染逻辑同步更新以支持 extra-* 条目的显示",
+          "passed": true,
+          "evidence": "SKILL.md「动态数据持久化规则」表格：'预览同步 | 新增容器类型时同步更新 DocumentPreview 渲染逻辑'。references/template-example.md 检查清单也有此项。"
+        },
+        {
+          "text": "修改前使用 grep_search 搜索所有 extra-* 相关代码",
+          "passed": true,
+          "evidence": "SKILL.md「标准工作流」第1条和 references/ui-workflow.md BUG 修复工作流均要求先搜索再修改。"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "total_evals": 9,
+    "total_assertions": 59,
+    "passed": 59,
+    "failed": 0,
+    "pass_rate": 1.0
+  },
+  "eval_feedback": {
+    "suggestions": [
+      {
+        "assertion": "使用 FigmaPartner MCP 的 get_design_context 或 get_screenshot 读取 Figma 设计稿",
+        "reason": "此断言仅检查 skill 是否提到了工具名称，但无法验证模型是否真正正确调用了 MCP 工具并成功解析了返回数据。建议增加断言检查'解析后的 textFields 数量与设计稿中的文字区域数量匹配'。"
+      },
+      {
+        "assertion": "修改前使用 grep_search 搜索相关代码位置",
+        "reason": "此断言在 eval 3/4/9 中重复出现，属于通用工作流要求而非特定功能验证。可以考虑将其作为全局断言而非每个 eval 单独列出。"
+      },
+      {
+        "reason": "当前所有断言都是'skill 文档是否覆盖了指导信息'的静态检查，缺少对模型实际执行效果的动态验证。例如 eval 1 应该验证生成的代码是否能通过 TypeScript 编译。"
+      },
+      {
+        "reason": "eval 7（容器零件库）缺少对零件拼接顺序的断言 — 整体印象应在具体需求之前，参考资料在最后。skill 中虽有模块顺序表格，但没有断言验证。"
+      },
+      {
+        "reason": "缺少对 css-guidelines.md 参考文件的覆盖测试。当前没有 eval 专门测试 CSS 隔离、z-index 分层等样式规范的正确应用。"
+      }
+    ],
+    "overall": "Skill 文档覆盖度极高，所有 59 个断言均通过。SKILL.md 主文件 + 5 个 references 文件形成了完整的知识体系。主要改进方向：1) 增加动态执行验证断言；2) 补充 CSS 规范专项测试；3) 考虑增加边界场景测试（如 Figma API 失败降级、超大模版性能等）。"
+  }
+}

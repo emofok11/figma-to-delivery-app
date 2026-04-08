@@ -1,0 +1,177 @@
+{
+  "current_description": "将 Figma 设计稿转化为填表式发包应用的完整工作流。当用户提到发包神器、发包模版、UI发包、设计稿转表单、Figma模版生成、填表式发包、模版库管理、击杀图标模版、游戏美术资源发包、设计稿生成表单、图标模版、发包工具、资源发包、模版编辑器等关键词时，请使用此 Skill。即使用户只是说'帮我做一个发包工具'、'读取 Figma 生成表单'、'新增一个模版'或'从设计稿生成编辑器'，也应触发此 Skill。",
+  "analysis": [
+    {
+      "id": 1,
+      "query_summary": "游戏UI + 发包工具 + Figma链接 + 击杀图标模版",
+      "should_trigger": true,
+      "would_trigger": true,
+      "confidence": "high",
+      "reason": "包含'发包工具'、'击杀图标'、'Figma设计稿'等多个强触发关键词"
+    },
+    {
+      "id": 2,
+      "query_summary": "新增技能图标发包模版 + Figma链接",
+      "should_trigger": true,
+      "would_trigger": true,
+      "confidence": "high",
+      "reason": "包含'发包模版'、'图标'、'figma链接'等强触发词"
+    },
+    {
+      "id": 3,
+      "query_summary": "发包神器预览页面图片标签修复",
+      "should_trigger": true,
+      "would_trigger": true,
+      "confidence": "high",
+      "reason": "'发包神器'是直接触发关键词"
+    },
+    {
+      "id": 4,
+      "query_summary": "列表表格模板编辑器 + 动态添加图片坑位",
+      "should_trigger": true,
+      "would_trigger": true,
+      "confidence": "medium",
+      "reason": "'列表表格模板'和'编辑器'匹配，但'图片坑位'不在关键词列表中。description 中有'模版编辑器'可能匹配"
+    },
+    {
+      "id": 5,
+      "query_summary": "美术资源发包流程 + 从设计稿生成编辑器",
+      "should_trigger": true,
+      "would_trigger": true,
+      "confidence": "high",
+      "reason": "'美术资源发包'和'从设计稿生成编辑器'都是触发词"
+    },
+    {
+      "id": 6,
+      "query_summary": "模版库管理页面 + TemplateLibrary组件",
+      "should_trigger": true,
+      "would_trigger": true,
+      "confidence": "high",
+      "reason": "'模版库管理'是直接触发关键词"
+    },
+    {
+      "id": 7,
+      "query_summary": "容器零件库 + 拼模版",
+      "should_trigger": true,
+      "would_trigger": false,
+      "confidence": "medium",
+      "reason": "⚠️ '容器零件库'不在关键词列表中，'拼模版'也不是标准触发词。description 中没有提到 containerPartFactory 或零件库概念。可能被误判为通用 React 开发"
+    },
+    {
+      "id": 8,
+      "query_summary": "编辑器动态条目 + extra-impression + 数据持久化",
+      "should_trigger": true,
+      "would_trigger": false,
+      "confidence": "low",
+      "reason": "⚠️ 没有任何直接触发关键词。'编辑器'太泛化，'extra-impression'和'数据持久化'不在 description 中。很可能不触发"
+    },
+    {
+      "id": 9,
+      "query_summary": "竖版Figma + 列表表格发包模板",
+      "should_trigger": true,
+      "would_trigger": true,
+      "confidence": "high",
+      "reason": "'发包模板'和'figma设计稿'匹配"
+    },
+    {
+      "id": 10,
+      "query_summary": "击杀图标编辑器 + 添加条目按钮 + 导航tab",
+      "should_trigger": true,
+      "would_trigger": true,
+      "confidence": "medium",
+      "reason": "'击杀图标'匹配，但'添加条目按钮'和'导航tab'不在关键词中"
+    },
+    {
+      "id": 11,
+      "query_summary": "Figma设计稿 + 颜色字体 + 设计规范文档",
+      "should_trigger": false,
+      "would_trigger": false,
+      "confidence": "medium",
+      "reason": "虽然提到 Figma，但目的是'整理设计规范文档'而非发包。description 强调'发包'场景，应该不触发。但'Figma设计稿'可能造成误触发"
+    },
+    {
+      "id": 12,
+      "query_summary": "PDF发票 + 提取表格 + Excel",
+      "should_trigger": false,
+      "would_trigger": false,
+      "confidence": "high",
+      "reason": "完全不相关，PDF skill 会接管"
+    },
+    {
+      "id": 13,
+      "query_summary": "PPT模版 + 产品介绍deck",
+      "should_trigger": false,
+      "would_trigger": false,
+      "confidence": "high",
+      "reason": "虽然有'模版'关键词，但'PPT'和'deck'明确指向 pptx skill"
+    },
+    {
+      "id": 14,
+      "query_summary": "优化发包神器skill的触发描述",
+      "should_trigger": false,
+      "would_trigger": true,
+      "confidence": "medium",
+      "reason": "⚠️ 包含'发包神器'触发词！但实际应该触发 skill-creator。这是一个 near-miss 陷阱"
+    },
+    {
+      "id": 15,
+      "query_summary": "React表单生成器 + 拖拽 + 低代码",
+      "should_trigger": false,
+      "would_trigger": false,
+      "confidence": "medium",
+      "reason": "虽然涉及'表单生成'，但'拖拽'和'低代码平台'与发包无关。description 中'设计稿转表单'可能造成轻微混淆"
+    },
+    {
+      "id": 16,
+      "query_summary": "Figma切图导出 + PNG/SVG资源",
+      "should_trigger": false,
+      "would_trigger": false,
+      "confidence": "medium",
+      "reason": "提到 Figma 但目的是切图导出，不是发包。description 中'Figma'可能造成误触发"
+    },
+    {
+      "id": 17,
+      "query_summary": "图片上传组件 + react-image-crop + 头像设置",
+      "should_trigger": false,
+      "would_trigger": false,
+      "confidence": "high",
+      "reason": "虽然涉及 react-image-crop（skill 技术栈），但场景是用户头像，与发包无关"
+    },
+    {
+      "id": 18,
+      "query_summary": "Node.js脚本 + Figma API + 批量拉取",
+      "should_trigger": false,
+      "would_trigger": false,
+      "confidence": "high",
+      "reason": "虽然涉及 Figma，但是脚本开发而非发包应用"
+    },
+    {
+      "id": 19,
+      "query_summary": "Handlebars模版引擎 + 邮件通知模版",
+      "should_trigger": false,
+      "would_trigger": false,
+      "confidence": "medium",
+      "reason": "'模版'关键词可能造成轻微混淆，但'Handlebars'和'邮件通知'明确指向不同领域"
+    },
+    {
+      "id": 20,
+      "query_summary": "游戏背包UI + Unity UGUI",
+      "should_trigger": false,
+      "would_trigger": false,
+      "confidence": "high",
+      "reason": "虽然是游戏UI，但是 Unity 开发，与 Web 发包工具无关"
+    }
+  ],
+  "estimated_scores": {
+    "should_trigger_accuracy": "8/10 (80%)",
+    "should_not_trigger_accuracy": "9/10 (90%)",
+    "overall_accuracy": "17/20 (85%)",
+    "false_negatives": ["#7 容器零件库", "#8 动态数据持久化"],
+    "false_positives": ["#14 优化skill触发描述（含'发包神器'关键词）"],
+    "weak_spots": [
+      "description 缺少对项目内部概念的覆盖（容器零件库、extra-*动态数据、列表表格编辑器等）",
+      "description 中的关键词列表过于依赖'发包'相关词汇，对 BUG 修复和功能迭代场景覆盖不足",
+      "缺少对'不应触发'场景的排除说明（如 skill 元操作应交给 skill-creator）"
+    ]
+  }
+}

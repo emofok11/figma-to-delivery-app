@@ -1,0 +1,657 @@
+.image-uploader {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 12px;
+  background: #fafafa;
+  transition: all 0.3s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.image-uploader:hover {
+  border-color: #1890ff;
+  box-shadow: 0 2px 8px rgba(24, 144, 255, 0.1);
+}
+
+/* 选中状态样式 - 去掉底框，仅保留上方提示 */
+.image-uploader.selected {
+  border-color: #e0e0e0;
+  box-shadow: none;
+  background: #fafafa;
+  transform: none;
+}
+
+.image-uploader.selected .image-uploader-dropzone {
+  border-color: #d9d9d9;
+  background: #fff;
+}
+
+.image-uploader.selected::before {
+  content: '✅ 已选中 - 可粘贴图片';
+  position: absolute;
+  bottom: -12px; /* 改到底部，避免遮挡关闭按钮 */
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #52c41a, #73d13d);
+  color: white;
+  padding: 6px 16px;
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 600;
+  z-index: 10;
+  animation: bounce 0.6s ease-in-out infinite;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(82, 196, 26, 0.4);
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-4px); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.05); }
+}
+
+.image-uploader-header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.slot-label {
+  font-weight: 600;
+  font-size: 14px;
+  color: #333;
+}
+
+/* 可编辑标题 input 样式：与 span 保持一致的视觉效果 */
+input.slot-label-editable {
+  font-weight: 600;
+  font-size: 14px;
+  color: #333;
+  border: 1px solid transparent;
+  background: transparent;
+  padding: 0 3px;
+  margin: -1px 0;
+  border-radius: 4px;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.2s;
+}
+
+input.slot-label-editable:hover {
+  border-color: #d9d9d9;
+}
+
+input.slot-label-editable:focus {
+  border-color: #1890ff;
+  background: #fff;
+}
+
+/* placeholder 样式：浅灰色提示 */
+input.slot-label-editable::placeholder {
+  color: #bfbfbf;
+  font-weight: 400;
+  font-style: italic;
+}
+
+/* 未填写标题时的占位提示：可点击，浅灰色斜体 */
+.slot-label-placeholder {
+  color: #bfbfbf !important;
+  font-weight: 400 !important;
+  font-style: italic;
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.2s;
+}
+
+.slot-label-placeholder:hover {
+  color: #1890ff !important;
+}
+
+.required-mark {
+  color: #ff4d4f;
+  font-weight: bold;
+}
+
+.image-uploader-body {
+  /* 移除固定最小高度，让内容自适应 */
+}
+
+.image-uploader-footer {
+  margin-top: 8px;
+}
+
+.slot-description {
+  font-size: 12px;
+  color: #999;
+}
+
+/* 拖拽上传区域 */
+.image-uploader-dropzone {
+  border: 2px dashed #d9d9d9;
+  border-radius: 8px;
+  padding: 20px 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: #fff;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-uploader-dropzone:hover,
+.image-uploader-dropzone.dragging {
+  border-color: #1890ff;
+  background: #e6f7ff;
+}
+
+.dropzone-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.upload-icon {
+  font-size: 32px;
+  opacity: 0.5;
+}
+
+.upload-text {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+}
+
+.upload-hint {
+  font-size: 12px;
+  color: #999;
+  margin: 0;
+}
+
+.upload-hint.paste-hint {
+  color: #52c41a;
+  font-weight: 500;
+}
+
+/* 预览区域 */
+.image-uploader-preview {
+  position: relative; /* 支持右上角删除按钮定位 */
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.preview-image-container {
+  position: relative;
+  width: 100%;
+  /* 不固定高度，随图片内容自适应 */
+  background: transparent;
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.preview-image-container img {
+  /* 宽度撑满容器，高度按图片实际比例自动计算 */
+  width: 100%;
+  height: auto;
+  object-fit: unset;
+  display: block;
+  border-radius: 4px;
+  transition: transform 0.3s ease;
+}
+
+.crop-overlay {
+  position: absolute;
+  border: 2px solid #1890ff;
+  background: rgba(24, 144, 255, 0.1);
+  pointer-events: none;
+}
+
+.preview-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+/* 右上角删除按钮样式 */
+.btn-delete-corner {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.btn-delete-corner:hover {
+  background: #ff4d4f;
+  transform: scale(1.1);
+}
+
+.preview-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.actual-size {
+  font-size: 12px;
+  color: #52c41a;
+  font-weight: 500;
+  background: #f6ffed;
+  padding: 4px 12px;
+  border-radius: 4px;
+  border: 1px solid #b7eb8f;
+}
+
+.btn-edit,
+.btn-delete {
+  padding: 6px 16px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.btn-edit {
+  background: #1890ff;
+  color: white;
+}
+
+.btn-edit:hover {
+  background: #40a9ff;
+}
+
+.btn-delete {
+  background: #fff;
+  color: #ff4d4f;
+  border: 1px solid #ff4d4f;
+}
+
+.btn-delete:hover {
+  background: #ff4d4f;
+  color: white;
+}
+
+/* 编辑器模态框 */
+.image-editor-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.image-editor-modal {
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.editor-header {
+  padding: 16px 24px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.editor-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.editor-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+}
+
+/* 模式提示文字 */
+.editor-mode-hint {
+  font-size: 12px;
+  color: #999;
+  font-style: italic;
+}
+
+/* 编辑器工具栏：裁切/马赛克模式切换 */
+.editor-toolbar {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.toolbar-btn {
+  padding: 6px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  border: 1px solid #d9d9d9;
+  background: #fff;
+  color: #666;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+/* 裁切/确认裁切按钮固定宽度，避免切换时按钮位置偏移 */
+.toolbar-btn.toolbar-btn-crop {
+  min-width: 110px;
+}
+
+.toolbar-btn:hover {
+  border-color: #1890ff;
+  color: #1890ff;
+}
+
+.toolbar-btn.active {
+  background: #1890ff;
+  color: #fff;
+  border-color: #1890ff;
+  box-shadow: 0 2px 6px rgba(24, 144, 255, 0.3);
+}
+
+/* 马赛克按钮包裹器（支持角标定位） */
+.toolbar-btn-wrapper {
+  position: relative;
+  display: inline-flex;
+}
+
+/* 马赛克数量角标 */
+.mosaic-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 8px;
+  background: #ff4d4f;
+  color: white;
+  font-size: 10px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  pointer-events: none;
+  box-shadow: 0 1px 3px rgba(255, 77, 79, 0.4);
+}
+
+/* 马赛克/确认马赛克按钮固定宽度，避免切换时按钮位置偏移 */
+.toolbar-btn.toolbar-btn-mosaic {
+  min-width: 130px;
+}
+
+/* 清除马赛克按钮 */
+.toolbar-btn.btn-clear-all-mosaic {
+  background: #fff;
+  color: #ff4d4f;
+  border-color: #ff4d4f;
+  font-size: 12px;
+  padding: 4px 10px;
+}
+
+.toolbar-btn.btn-clear-all-mosaic:hover {
+  background: #ff4d4f;
+  color: white;
+  border-color: #ff4d4f;
+}
+
+/* 确认马赛克按钮 */
+.toolbar-btn.btn-confirm-mosaic {
+  background: #52c41a;
+  color: white;
+  border-color: #52c41a;
+}
+
+.toolbar-btn.btn-confirm-mosaic:hover:not(:disabled) {
+  background: #73d13d;
+  border-color: #73d13d;
+}
+
+/* 确认马赛克旁的内联清除按钮 */
+.btn-clear-inline {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid #ff4d4f;
+  background: #fff;
+  color: #ff4d4f;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  margin-left: 4px;
+  flex-shrink: 0;
+}
+
+.btn-clear-inline:hover {
+  background: #ff4d4f;
+  color: white;
+}
+
+/* 裁切确认按钮 */
+.toolbar-btn.btn-confirm-crop {
+  background: #52c41a;
+  color: white;
+  border-color: #52c41a;
+}
+
+.toolbar-btn.btn-confirm-crop:hover:not(:disabled) {
+  background: #73d13d;
+  border-color: #73d13d;
+}
+
+/* 工具栏按钮禁用状态 */
+.toolbar-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 工具栏按钮间距调整 */
+.editor-toolbar {
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.editor-body {
+  flex: 1;
+  padding: 24px;
+  overflow: auto;
+}
+
+.editor-preview {
+  width: 100%;
+  min-height: 300px;
+  background: #f5f5f5;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.editor-footer {
+  padding: 16px 24px;
+  border-top: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.btn-primary,
+.btn-secondary {
+  padding: 8px 24px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background: #1890ff;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #40a9ff;
+}
+
+.btn-secondary {
+  background: #fff;
+  color: #666;
+  border: 1px solid #d9d9d9;
+}
+
+.btn-secondary:hover {
+  border-color: #1890ff;
+  color: #1890ff;
+}
+
+/* 裁切编辑器 */
+.crop-editor {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: crosshair;
+}
+
+.crop-editor img {
+  max-width: 100%;
+  max-height: 400px;
+  user-select: none;
+}
+
+.crop-box {
+  position: absolute;
+  border: 2px solid #1890ff;
+  background: rgba(24, 144, 255, 0.1);
+  pointer-events: none; /* 事件穿透到容器，由容器统一处理拖动 */
+  z-index: 2;
+}
+
+.crop-handle {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: #1890ff;
+  border: 2px solid white;
+  border-radius: 50%;
+  pointer-events: none; /* 事件穿透到容器，由容器统一处理拖动 */
+}
+
+/* 四角 handle */
+.crop-handle.nw { top: -5px; left: -5px; cursor: nw-resize; }
+.crop-handle.ne { top: -5px; right: -5px; cursor: ne-resize; }
+.crop-handle.sw { bottom: -5px; left: -5px; cursor: sw-resize; }
+.crop-handle.se { bottom: -5px; right: -5px; cursor: se-resize; }
+
+/* 四边中点 handle */
+.crop-handle.n { top: -5px; left: 50%; transform: translateX(-50%); cursor: n-resize; }
+.crop-handle.s { bottom: -5px; left: 50%; transform: translateX(-50%); cursor: s-resize; }
+.crop-handle.w { top: 50%; left: -5px; transform: translateY(-50%); cursor: w-resize; }
+.crop-handle.e { top: 50%; right: -5px; transform: translateY(-50%); cursor: e-resize; }
+
+/* 裁切框外部遮罩层（半透明黑色） */
+.crop-mask-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.45);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.crop-box {
+  z-index: 2;
+  pointer-events: none; /* 事件穿透到容器 */
+}
+
+/* 马赛克实时预览 Canvas（覆盖在图片上方，仅在马赛克模式下显示） */
+.mosaic-preview-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* 马赛克模式光标 */
+.crop-editor.mosaic-mode {
+  cursor: crosshair;
+}
+
+.crop-editor.crop-mode {
+  cursor: crosshair;
+}
+
+/* 马赛克区域删除按钮（浮在 canvas 上方） */
+.mosaic-region-delete {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #ff4d4f;
+  color: white;
+  border: 2px solid white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  line-height: 1;
+  z-index: 10;
+  transition: transform 0.2s;
+  pointer-events: auto;
+}
+
+.mosaic-region-delete:hover {
+  transform: scale(1.2);
+  background: #ff1a1a;
+}
+

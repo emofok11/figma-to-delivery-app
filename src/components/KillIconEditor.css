@@ -1,0 +1,415 @@
+/* 击杀图标编辑器样式 - 紧凑美观版 */
+
+.kill-icon-editor {
+  height: 100vh;
+  overflow: hidden;
+  background: #f0f2f5; /* 更柔和的背景色 */
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== 头部 ===== */
+.kill-icon-editor .editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 24px; /* 从 20px 32px 压缩到 10px 24px */
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  box-shadow: 0 2px 12px rgba(102, 126, 234, 0.3);
+  flex-shrink: 0; /* 防止头部被压缩 */
+  border-bottom: none;
+}
+
+.selected-slot-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #52c41a, #73d13d);
+  color: white;
+  padding: 4px 10px; /* 缩小 */
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  animation: fadeIn 0.3s ease;
+  box-shadow: 0 2px 6px rgba(82, 196, 26, 0.3);
+}
+
+.paste-hint-inline {
+  font-size: 11px;
+  opacity: 0.85;
+  padding-left: 6px;
+  border-left: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-back-inline {
+  padding: 5px 12px;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-right: 4px;
+}
+
+.btn-back-inline:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateX(-2px);
+}
+
+.template-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px; /* 从 8px 16px 缩小 */
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+}
+
+.badge-icon {
+  font-size: 16px; /* 从 20px 缩小 */
+}
+
+.badge-text {
+  font-size: 15px; /* 从 18px 缩小 */
+  font-weight: 600;
+}
+
+.version-tag {
+  padding: 3px 10px; /* 从 4px 12px 缩小 */
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  font-size: 11px;
+}
+
+.kill-icon-editor .header-actions {
+  display: flex;
+  gap: 8px; /* 从 12px 缩小 */
+}
+
+.btn-save,
+.btn-preview,
+.btn-export {
+  padding: 6px 16px; /* 从 10px 24px 缩小 */
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.btn-save {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.btn-save:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.btn-preview {
+  background: rgba(255, 255, 255, 0.35);
+  color: white;
+}
+
+.btn-preview:hover {
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.btn-export {
+  background: white;
+  color: #667eea;
+}
+
+.btn-export:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* ===== 主内容 ===== */
+.kill-icon-editor .editor-main {
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  overflow: hidden;
+  height: calc(100vh - 52px); /* 减去头部高度，撑满剩余空间 */
+  padding: 0;
+  gap: 0;
+}
+
+/* ===== 侧边导航 ===== */
+.sidebar-nav {
+  width: 160px; /* 从 220px 缩小 */
+  background: white;
+  border-right: 1px solid #e8e8e8;
+  padding: 12px 0; /* 从 20px 缩小 */
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+
+.nav-item {
+  display: block;
+  padding: 8px 14px; /* 从 12px 20px 缩小 */
+  border-left: 3px solid transparent;
+  color: #666;
+  text-decoration: none;
+  font-size: 13px; /* 从 14px 缩小 */
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nav-item:hover {
+  background: #f5f7fa;
+  color: #333;
+  border-left-color: inherit;
+}
+
+/* ===== 编辑区域 ===== */
+.editor-content {
+  flex: 1;
+  padding: 16px 20px; /* 从 32px 大幅缩小 */
+  overflow-y: auto;
+}
+
+/* ===== 基础信息区域 ===== */
+.basic-info-section {
+  background: white;
+  border-radius: 8px; /* 从 12px 缩小 */
+  padding: 14px 16px; /* 从 24px 缩小 */
+  margin-bottom: 12px; /* 从 24px 缩小 */
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.basic-info-row {
+  display: flex;
+  gap: 16px; /* 从 24px 缩小 */
+}
+
+.basic-info-field {
+  flex: 1;
+}
+
+.basic-info-field .field-label {
+  font-size: 12px; /* 从 14px 缩小 */
+  font-weight: 500;
+  color: #555;
+  margin-bottom: 5px;
+}
+
+.theme-name-input {
+  font-size: 14px; /* 从 16px 缩小 */
+  font-weight: 500;
+  padding: 7px 12px; /* 从 12px 16px 缩小 */
+}
+
+.version-input {
+  max-width: 180px; /* 从 200px 缩小 */
+}
+
+/* ===== 模块区域 ===== */
+.module-section {
+  background: white;
+  border-radius: 8px; /* 从 12px 缩小 */
+  margin-bottom: 10px; /* 从 24px 大幅缩小 */
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.module-header {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* 从 12px 缩小 */
+  padding: 10px 14px; /* 从 16px 20px 缩小 */
+  background: #fafafa;
+  border-left: 3px solid; /* 从 4px 缩小 */
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.module-icon {
+  font-size: 15px; /* 从 20px 缩小 */
+}
+
+.module-title {
+  margin: 0;
+  font-size: 13px; /* 从 16px 缩小 */
+  font-weight: 600;
+  color: #333;
+}
+
+.module-content {
+  padding: 12px 14px; /* 从 20px 缩小 */
+}
+
+/* ===== 文字字段 ===== */
+.text-field-wrapper {
+  margin-bottom: 10px; /* 从 16px 缩小 */
+}
+
+.field-label {
+  display: block;
+  font-size: 12px; /* 从 13px 缩小 */
+  color: #777;
+  margin-bottom: 4px; /* 从 6px 缩小 */
+}
+
+.field-input {
+  width: 100%;
+  padding: 7px 10px; /* 从 10px 14px 缩小 */
+  border: 1px solid #e8e8e8;
+  border-radius: 5px; /* 从 6px 缩小 */
+  font-size: 13px; /* 从 14px 缩小 */
+  color: #333;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.field-input:hover {
+  border-color: #40a9ff;
+}
+
+.field-input:focus {
+  outline: none;
+  border-color: #1890ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1); /* 从 3px 缩小 */
+}
+
+/* ===== 图片坑位网格 ===== */
+.image-slots-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px; /* 从 16px 缩小 */
+  margin-top: 10px; /* 从 16px 缩小 */
+}
+
+/* ===== 附录区域 ===== */
+.appendix-section {
+  background: #fff8e1;
+  border: 1px solid #ffcdd2;
+  border-radius: 8px; /* 从 12px 缩小 */
+  padding: 12px 14px; /* 从 20px 缩小 */
+  margin-top: 16px; /* 从 32px 缩小 */
+}
+
+.appendix-header {
+  display: flex;
+  align-items: center;
+  gap: 6px; /* 从 8px 缩小 */
+  margin-bottom: 8px; /* 从 12px 缩小 */
+}
+
+.appendix-header h3 {
+  margin: 0;
+  font-size: 13px; /* 从 15px 缩小 */
+  color: #d32f2f;
+}
+
+.appendix-icon {
+  font-size: 15px; /* 从 20px 缩小 */
+}
+
+.appendix-content {
+  font-size: 12px; /* 从 13px 缩小 */
+  color: #666;
+  line-height: 1.7;
+}
+
+.appendix-content p {
+  margin: 0 0 5px; /* 从 8px 缩小 */
+}
+
+.warning-text {
+  color: #d32f2f;
+  font-weight: 500;
+}
+
+/* ===== 响应式 ===== */
+@media (max-width: 1400px) {
+  .image-slots-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 1200px) {
+  .image-slots-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 1024px) {
+  .sidebar-nav {
+    display: none;
+  }
+  
+  .editor-content {
+    padding: 12px 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .editor-header {
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px 16px;
+  }
+  
+  .header-left,
+  .header-actions {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .image-slots-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===== 添加条目按钮（统一样式）===== */
+.kill-icon-editor .list-table-add-entry-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 0;
+  margin-top: 8px;
+  background: transparent;
+  border: none;
+  color: #888;
+  font-size: 13px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  user-select: none;
+}
+
+.kill-icon-editor .list-table-add-entry-btn:hover {
+  color: #1890ff;
+}
+
+.kill-icon-editor .list-table-add-entry-btn .add-icon {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.kill-icon-editor .list-table-add-entry-btn .add-text {
+  font-size: 13px;
+}
+
+.kill-icon-editor .text-field-wrapper.extra-item {
+  position: relative;
+  padding-right: 35px;
+}

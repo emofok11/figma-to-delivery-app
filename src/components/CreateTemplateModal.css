@@ -1,0 +1,982 @@
+/* 创建模版模态框样式 */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-content {
+  background: white;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 560px;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.modal-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin: 0;
+}
+
+.modal-close {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: #f5f5f5;
+  border-radius: 50%;
+  font-size: 20px;
+  color: #999;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-close:hover {
+  background: #e8e8e8;
+  color: #666;
+}
+
+/* 步骤指示器 */
+.step-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: #fafafa;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0.5;
+  transition: all 0.3s ease;
+}
+
+.step.active {
+  opacity: 1;
+}
+
+.step-number {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #d9d9d9;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.step.active .step-number {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.step-label {
+  font-size: 14px;
+  color: #666;
+}
+
+.step.active .step-label {
+  color: #333;
+  font-weight: 500;
+}
+
+.step-line {
+  width: 60px;
+  height: 2px;
+  background: #e8e8e8;
+  margin: 0 16px;
+}
+
+/* 表单 */
+.modal-body {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.form-section {
+  animation: fadeIn 0.3s ease;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.form-label .required {
+  color: #ff4d4f;
+  margin-left: 4px;
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #333;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.form-input:hover,
+.form-select:hover,
+.form-textarea:hover {
+  border-color: #40a9ff;
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: #1890ff;
+  box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.1);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.form-error {
+  font-size: 12px;
+  color: #ff4d4f;
+  margin: 8px 0 0;
+}
+
+.form-success {
+  font-size: 12px;
+  color: #52c41a;
+  margin: 8px 0 0;
+}
+
+/* 帮助说明 */
+.help-section {
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin-top: 16px;
+}
+
+.help-section h4 {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  margin: 0 0 12px;
+}
+
+.help-section ol {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 13px;
+  color: #666;
+  line-height: 1.8;
+}
+
+/* 底部按钮 */
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 24px;
+  border-top: 1px solid #f0f0f0;
+  background: #fafafa;
+}
+
+.btn-primary,
+.btn-secondary {
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: white;
+  color: #666;
+  border: 1px solid #d9d9d9;
+}
+
+.btn-secondary:hover {
+  border-color: #1890ff;
+  color: #1890ff;
+}
+
+/* Token 输入框包装器（含显示/隐藏切换按钮） */
+.token-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.token-input-wrapper .form-input {
+  padding-right: 40px; /* 为切换按钮留出空间 */
+}
+
+.token-toggle-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+
+.token-toggle-btn:hover {
+  opacity: 1;
+}
+
+/* 导入失败错误提示横幅 */
+.error-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 16px;
+  background: #fff2f0;
+  border: 1px solid #ffccc7;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  animation: fadeIn 0.3s ease;
+}
+
+.error-banner .error-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.error-banner .error-content {
+  flex: 1;
+}
+
+.error-banner .error-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #cf1322;
+  margin: 0 0 4px;
+}
+
+.error-banner .error-message {
+  font-size: 13px;
+  color: #a8071a;
+  margin: 0 0 6px;
+  word-break: break-word;
+}
+
+.error-banner .error-hint {
+  font-size: 12px;
+  color: #999;
+  margin: 0;
+}
+
+/* 输入框错误状态 */
+.form-input.input-error {
+  border-color: #ff4d4f;
+  box-shadow: 0 0 0 3px rgba(255, 77, 79, 0.1);
+}
+
+.form-input.input-error:focus {
+  border-color: #ff4d4f;
+  box-shadow: 0 0 0 3px rgba(255, 77, 79, 0.2);
+}
+
+/* 参考模板提示文字 */
+.form-hint-inline {
+  font-weight: 400;
+  color: #999;
+  font-size: 12px;
+}
+
+/* ===== 数据来源模式切换 ===== */
+.source-mode-switch {
+  display: flex;
+  gap: 0;
+  margin-bottom: 20px;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.source-mode-btn {
+  flex: 1;
+  padding: 10px 16px;
+  border: none;
+  background: #fafafa;
+  color: #666;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.source-mode-btn:first-child {
+  border-right: 1px solid #d9d9d9;
+}
+
+.source-mode-btn.active {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+}
+
+.source-mode-btn:hover:not(.active) {
+  background: #f0f0f0;
+  color: #333;
+}
+
+/* ===== 图片上传区域 ===== */
+.image-upload-zone {
+  border: 2px dashed #d9d9d9;
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: #fafbfc;
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-upload-zone:hover {
+  border-color: #667eea;
+  background: #f5f0ff;
+}
+
+/* 拖拽悬停状态 */
+.image-upload-zone.dragging {
+  border-color: #667eea;
+  background: #ede9fe;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+}
+
+/* 已上传图片状态 */
+.image-upload-zone.has-image {
+  border-style: solid;
+  border-color: #52c41a;
+  background: #f6ffed;
+  cursor: default;
+  padding: 12px;
+}
+
+/* 上传占位符 */
+.upload-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.upload-icon {
+  font-size: 36px;
+  opacity: 0.6;
+}
+
+.upload-text {
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+  margin: 0;
+}
+
+.upload-hint {
+  font-size: 12px;
+  color: #999;
+  margin: 0;
+}
+
+/* 粘贴上传提示 */
+.upload-paste-hint {
+  font-size: 12px;
+  color: #667eea;
+  margin: 4px 0 0 0;
+  opacity: 0.85;
+}
+
+/* 上传预览 */
+.upload-preview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  position: relative;
+}
+
+.upload-preview-img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #e8e8e8;
+  flex-shrink: 0;
+}
+
+.upload-preview-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  text-align: left;
+}
+
+.upload-filename {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.upload-filesize {
+  font-size: 12px;
+  color: #999;
+}
+
+/* 移除图片按钮 */
+.upload-remove-btn {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: none;
+  background: #ff4d4f;
+  color: white;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(255, 77, 79, 0.3);
+}
+
+.upload-remove-btn:hover {
+  background: #cf1322;
+  transform: scale(1.1);
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .modal-content {
+    width: 95%;
+    max-height: 95vh;
+  }
+  
+  .step-indicator {
+    padding: 16px;
+  }
+  
+  .step-line {
+    width: 30px;
+    margin: 0 8px;
+  }
+  
+  .modal-body {
+    padding: 16px;
+  }
+}
+
+/* ========== 智能解析结果预览样式 ========== */
+
+/* 解析状态提示 */
+.parse-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-top: 12px;
+  font-size: 13px;
+}
+
+.parse-status.analyzing {
+  background: #e6f7ff;
+  color: #0050b3;
+  border: 1px solid #91d5ff;
+}
+
+.parse-status.success {
+  background: #f6ffed;
+  color: #389e0d;
+  border: 1px solid #b7eb8f;
+}
+
+.parse-status.error {
+  background: #fff2f0;
+  color: #cf1322;
+  border: 1px solid #ffccc7;
+}
+
+.parse-icon {
+  font-size: 16px;
+}
+
+.parse-text {
+  font-weight: 500;
+}
+
+/* 解析结果预览容器 */
+.parse-result-preview {
+  margin-top: 16px;
+  padding: 16px;
+  background: #fafafa;
+  border-radius: 12px;
+  border: 1px solid #e8e8e8;
+}
+
+.parse-result-title {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #262626;
+}
+
+/* 模块列表 */
+.module-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* 单个模块项 */
+.module-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e8e8e8;
+  transition: all 0.2s ease;
+}
+
+.module-item:hover {
+  border-color: #1890ff;
+  box-shadow: 0 2px 8px rgba(24, 144, 255, 0.1);
+}
+
+.module-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 模块类型标签 */
+.module-type-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  background: #f0f5ff;
+  color: #2f54eb;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.module-label {
+  font-size: 13px;
+  color: #595959;
+}
+
+/* 可重复标识 */
+.module-repeatable {
+  font-size: 12px;
+  color: #52c41a;
+  margin-left: 4px;
+}
+
+/* 模块详情 */
+.module-details {
+  display: flex;
+  gap: 12px;
+}
+
+.module-detail {
+  font-size: 12px;
+  color: #8c8c8c;
+}
+
+/* 解析提示 */
+.parse-hint {
+  margin: 12px 0 0 0;
+  font-size: 12px;
+  color: #8c8c8c;
+  line-height: 1.5;
+}
+
+/* ===== 自定义模块区域样式 ===== */
+
+/* 自定义模块区域 */
+.custom-modules-section {
+  margin-top: 24px;
+  padding: 16px;
+  background: #fafafa;
+  border-radius: 8px;
+  border: 1px solid #f0f0f0;
+}
+
+/* 模块添加按钮组 */
+.module-add-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.module-add-btn {
+  padding: 8px 14px;
+  border: 1px solid #d9d9d9;
+  background: white;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #595959;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.module-add-btn:hover {
+  border-color: #1890ff;
+  color: #1890ff;
+  background: #e6f7ff;
+}
+
+/* 已添加模块列表 */
+.custom-modules-list {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px dashed #e8e8e8;
+}
+
+.modules-list-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #262626;
+  margin: 0 0 12px 0;
+}
+
+/* 单个模块项 */
+.custom-module-item {
+  padding: 12px;
+  margin-bottom: 8px;
+  background: white;
+  border: 1px solid #e8e8e8;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  cursor: grab;
+}
+
+.custom-module-item:hover {
+  border-color: #1890ff;
+  box-shadow: 0 2px 8px rgba(24, 144, 255, 0.1);
+}
+
+/* 拖拽中的模块项 */
+.custom-module-item.dragging {
+  opacity: 0.5;
+  border-color: #1890ff;
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.3);
+}
+
+/* 拖拽经过的目标模块项 */
+.custom-module-item.drag-over {
+  border-color: #52c41a;
+  border-style: dashed;
+  background: #f6ffed;
+}
+
+/* 拖拽手柄 */
+.drag-handle {
+  color: #bfbfbf;
+  font-size: 14px;
+  cursor: grab;
+  padding: 0 4px;
+  user-select: none;
+}
+
+.drag-handle:hover {
+  color: #1890ff;
+}
+
+/* 模块项头部 */
+.module-item-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.module-item-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #262626;
+  flex: 1;
+}
+
+.module-remove-btn {
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  color: #999;
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.module-remove-btn:hover {
+  background: #fff1f0;
+  color: #ff4d4f;
+}
+
+/* 模块项详情 */
+.module-item-details {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.detail-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  background: #f5f5f5;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #8c8c8c;
+}
+
+.detail-badge.repeatable {
+  background: #f6ffed;
+  color: #52c41a;
+}
+
+/* 模块操作按钮（添加图片坑位、添加行等） */
+.module-action-btn {
+  margin-top: 8px;
+  padding: 6px 12px;
+  border: 1px dashed #d9d9d9;
+  background: transparent;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #595959;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.module-action-btn:hover {
+  border-color: #1890ff;
+  color: #1890ff;
+  background: #e6f7ff;
+}
+
+/* 清空所有按钮 */
+.clear-all-btn {
+  margin-top: 12px;
+  padding: 8px 16px;
+  border: 1px solid #ffccc7;
+  background: #fff1f0;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #ff4d4f;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clear-all-btn:hover {
+  background: #ffccc7;
+}
+
+/* 新分类输入区域 */
+.new-category-input {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  align-items: center;
+}
+
+.new-category-input .form-input {
+  flex: 1;
+}
+
+.new-category-input .btn-primary,
+.new-category-input .btn-secondary {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+/* 自定义分类列表 */
+.custom-category-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 8px;
+  background: #fafafa;
+  border-radius: 4px;
+}
+
+.custom-category-list .list-label {
+  font-size: 12px;
+  color: #8c8c8c;
+}
+
+.custom-category-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: #e6f7ff;
+  border: 1px solid #91d5ff;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #1890ff;
+}
+
+.tag-remove-btn {
+  width: 16px;
+  height: 16px;
+  border: none;
+  background: transparent;
+  color: #1890ff;
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  line-height: 1;
+  transition: all 0.2s ease;
+}
+
+.tag-remove-btn:hover {
+  background: #1890ff;
+  color: white;
+}
+
+/* 自定义模板按钮 */
+.custom-template-btn {
+  margin-left: auto;
+  background: #f6ffed !important;
+  border-color: #b7eb8f !important;
+  color: #52c41a !important;
+}
+
+.custom-template-btn:hover {
+  background: #d9f7be !important;
+  border-color: #95de64 !important;
+  color: #389e0d !important;
+}
+
+/* 自定义模式头部 */
+.custom-mode-header {
+  margin-bottom: 20px;
+  padding: 16px;
+  background: linear-gradient(135deg, #f6ffed 0%, #e6f7ff 100%);
+  border-radius: 8px;
+  border-left: 4px solid #52c41a;
+}
+
+.custom-mode-header h3 {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #262626;
+}
+
+.custom-mode-hint {
+  margin: 0;
+  font-size: 13px;
+  color: #595959;
+  line-height: 1.5;
+}
