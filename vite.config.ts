@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  // GitHub Pages 部署路径（仓库名）
+  // GitHub Pages 部署在子路径下，必须设置 base
   base: '/figma-to-delivery-app/',
   server: {
     port: 3000,

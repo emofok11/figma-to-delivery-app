@@ -3,16 +3,7 @@
  * 从上传的设计稿图片智能推断模版结构
  */
 
-import { TemplateCategory, TextFieldConfig, ImageSlotConfig, ContainerPart, PreviewLayout } from '../types/template';
-
-interface SmartResult {
-  modules: ContainerPart[];
-  suggestedName: string;
-  suggestedCategory: TemplateCategory;
-  confidence: number;
-  rawText: string;
-  previewLayout: PreviewLayout;
-}
+import { TemplateCategory, TextFieldConfig, ImageSlotConfig } from '../types/template';
 
 interface ImageAnalysisResult {
   suggestedCategory: TemplateCategory;
@@ -23,7 +14,6 @@ interface ImageAnalysisResult {
     height: number;
     backgroundColor?: string;
   };
-  smartResult?: SmartResult;
 }
 
 /**
@@ -116,7 +106,7 @@ function generateDefaultStructure(
 
   // 根据不同分类定制结构
   switch (category) {
-case 'list-table':
+    case 'list-table':
       return {
         suggestedCategory: category,
         textFields: [
@@ -145,18 +135,10 @@ case 'list-table':
             supportedFormats: ['png', 'jpg', 'psd']
           }
         ],
-        previewLayout: { width: 900, height: 800, backgroundColor: '#1a1a2e' },
-smartResult: {
-          suggestedName: '列表表格模板',
-          suggestedCategory: category,
-          modules: [],
-          confidence: 0.8,
-          rawText: '',
-          previewLayout: { width: 900, height: 800, backgroundColor: '#1a1a2e' }
-        }
+        previewLayout: { width: 900, height: 800, backgroundColor: '#1a1a2e' }
       };
 
-case 'kill-icon':
+    case 'kill-icon':
     case 'skill-icon':
     case 'item-icon':
       return {
@@ -200,18 +182,10 @@ case 'kill-icon':
             supportedFormats: ['png', 'jpg', 'psd']
           }
         ],
-        previewLayout: { width: 800, height: 600, backgroundColor: '#1a1a2e' },
-smartResult: {
-          suggestedName: '图标设计模板',
-          suggestedCategory: category,
-          modules: [],
-          confidence: 0.8,
-          rawText: '',
-          previewLayout: { width: 800, height: 600, backgroundColor: '#1a1a2e' }
-        }
+        previewLayout: { width: 800, height: 600, backgroundColor: '#1a1a2e' }
       };
 
-case 'banner':
+    case 'banner':
       return {
         suggestedCategory: category,
         textFields: [
@@ -246,18 +220,10 @@ case 'banner':
             supportedFormats: ['png', 'jpg', 'psd']
           }
         ],
-        previewLayout: { width: 1200, height: 400, backgroundColor: '#1a1a2e' },
-smartResult: {
-          suggestedName: 'Banner设计模板',
-          suggestedCategory: category,
-          modules: [],
-          confidence: 0.8,
-          rawText: '',
-          previewLayout: { width: 1200, height: 400, backgroundColor: '#1a1a2e' }
-        }
+        previewLayout: { width: 1200, height: 400, backgroundColor: '#1a1a2e' }
       };
 
-case 'ui-panel':
+    case 'ui-panel':
       return {
         suggestedCategory: category,
         textFields: [
@@ -292,31 +258,15 @@ case 'ui-panel':
             supportedFormats: ['png', 'jpg', 'psd']
           }
         ],
-        previewLayout: { width: 1000, height: 600, backgroundColor: '#1a1a2e' },
-smartResult: {
-          suggestedName: 'UI面板设计模板',
-          suggestedCategory: category,
-          modules: [],
-          confidence: 0.8,
-          rawText: '',
-          previewLayout: { width: 1000, height: 600, backgroundColor: '#1a1a2e' }
-        }
+        previewLayout: { width: 1000, height: 600, backgroundColor: '#1a1a2e' }
       };
 
-default:
+    default:
       return {
         suggestedCategory: category,
         textFields: commonTextFields,
         imageSlots: commonImageSlots,
-        previewLayout: { width, height, backgroundColor: '#1a1a2e' },
-smartResult: {
-          suggestedName: '自定义模板',
-          suggestedCategory: category,
-          modules: [],
-          confidence: 0.6,
-          rawText: '',
-          previewLayout: { width, height, backgroundColor: '#1a1a2e' }
-        }
+        previewLayout: { width, height, backgroundColor: '#1a1a2e' }
       };
   }
 }
