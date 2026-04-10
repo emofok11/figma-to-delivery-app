@@ -43,22 +43,25 @@ export const TemplateLibrary: React.FC<TemplateLibraryProps> = ({
       try {
         // 加载历史记录
         const historyData = await supabaseService.getHistory();
-        if (historyData) {
-          setHistoryRecords(historyData.map(item => item.data));
+        if (historyData && historyData.length > 0) {
+          // 过滤掉无效数据（data 为空或缺少 id 的记录）
+          const validHistory = historyData.filter(item => item?.data && item.data.id);
+          setHistoryRecords(validHistory.map(item => item.data));
         }
         
         // 加载自定义模板
         const templatesData = await supabaseService.getTemplates();
-        if (templatesData) {
+        if (templatesData && templatesData.length > 0) {
           templatesData.forEach(item => {
-            if (!BUILT_IN_TEMPLATE_IDS.includes(item.id)) {
+            // 校验数据有效性，跳过无效或内置模版
+            if (item?.id && item?.data && !BUILT_IN_TEMPLATE_IDS.includes(item.id)) {
               templateRegistry.register(item.data);
             }
           });
           setRefreshTrigger(prev => prev + 1);
         }
       } catch (e) {
-        console.error('Failed to load data from Supabase, falling back to localStorage', e);
+        console.warn('Supabase 加载失败，使用 localStorage 兜底', e);
         const savedHistory = localStorage.getItem('template-history');
         if (savedHistory) {
           try {
