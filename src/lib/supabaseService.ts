@@ -3,16 +3,32 @@ import { TemplateDefinition, TemplateHistoryRecord } from '../types/template';
 
 // Supabase 数据服务
 // 所需表结构：
-// 1. templates (id, name, category, data, created_at, updated_at)
-// 2. template_history (id, template_id, title, data, created_at)
+// 1. templates (id, name, category, data, user_id, created_at, updated_at)
+// 2. template_history (id, template_id, title, data, user_id, created_at)
+
+/**
+ * 获取当前登录用户的 ID
+ * 未登录时返回 null
+ */
+async function getCurrentUserId(): Promise<string | null> {
+  const { data: { user } } = await supabase.auth.getUser();
+  return user?.id ?? null;
+}
 
 export const supabaseService = {
-  // 获取所有模版（表不存在或查询失败时返回空数组）
+  // 获取当前用户的所有模版（RLS 自动过滤，此处仅做兜底）
   async getTemplates() {
     try {
+      const userId = await getCurrentUserId();
+      if (!userId) {
+        console.warn('用户未登录，无法获取模版');
+        return [];
+      }
+
       const { data, error } = await supabase
         .from('templates')
         .select('*')
+        .eq('user_id', userId)
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -26,9 +42,15 @@ export const supabaseService = {
     }
   },
 
-  // 保存模版（静默失败，不影响主流程）
+  // 保存模版（强制附加当前用户 user_id）
   async saveTemplate(template: TemplateDefinition) {
     try {
+      const userId = await getCurrentUserId();
+      if (!userId) {
+        console.warn('用户未登录，无法保存模版');
+        return null;
+      }
+
       const { data, error } = await supabase
         .from('templates')
         .upsert({
@@ -36,6 +58,7 @@ export const supabaseService = {
           name: template.name,
           category: template.category,
           data: template,
+          user_id: userId,
           updated_at: new Date().toISOString()
         });
 
@@ -49,12 +72,19 @@ export const supabaseService = {
     }
   },
 
-  // 获取历史记录（表不存在或查询失败时返回空数组）
+  // 获取当前用户的历史记录（RLS 自动过滤，此处仅做兜底）
   async getHistory() {
     try {
+      const userId = await getCurrentUserId();
+      if (!userId) {
+        console.warn('用户未登录，无法获取历史记录');
+        return [];
+      }
+
       const { data, error } = await supabase
         .from('template_history')
         .select('*')
+        .eq('user_id', userId)
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -68,9 +98,15 @@ export const supabaseService = {
     }
   },
 
-  // 保存历史记录（静默失败，不影响主流程）
+  // 保存历史记录（强制附加当前用户 user_id）
   async saveHistory(record: TemplateHistoryRecord) {
     try {
+      const userId = await getCurrentUserId();
+      if (!userId) {
+        console.warn('用户未登录，无法保存历史记录');
+        return null;
+      }
+
       const { data, error } = await supabase
         .from('template_history')
         .upsert({
@@ -78,6 +114,7 @@ export const supabaseService = {
           template_id: record.templateId,
           title: record.title,
           data: record,
+          user_id: userId,
           created_at: record.updatedAt
         });
 

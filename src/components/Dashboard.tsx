@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useAuth } from '../contexts/AuthContext';
 import './Dashboard.css';
 
 // 工具模块定义，预留后续扩展
@@ -43,6 +44,8 @@ interface DashboardProps {
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ onEnterModule }) => {
+  const { user, signOut } = useAuth();
+
   return (
     <div className="dashboard">
       {/* 顶部导航栏 - 红色 */}
@@ -55,6 +58,13 @@ const Dashboard: React.FC<DashboardProps> = ({ onEnterModule }) => {
         </div>
         <div className="topbar-right">
           <span className="topbar-slogan">TACTICAL DESIGN SYSTEM</span>
+          {/* 用户信息与登出按钮 */}
+          {user && (
+            <div className="topbar-user">
+              <span className="topbar-email">{user.email}</span>
+              <button className="topbar-logout-btn" onClick={signOut}>登出</button>
+            </div>
+          )}
         </div>
       </header>
 

@@ -55,6 +55,31 @@
   text-transform: uppercase;
 }
 
+/* 会话过期提示 */
+.auth-gate-expired {
+  background: rgba(255, 70, 85, 0.15);
+  border: 1px solid rgba(255, 70, 85, 0.3);
+  border-radius: 2px;
+  color: #FF4655;
+  font-size: 13px;
+  padding: 8px 12px;
+  margin: -16px 0 16px 0;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.auth-gate-expired:hover {
+  opacity: 0.8;
+}
+
+/* 加载状态文字 */
+.auth-gate-loading {
+  color: rgba(236, 232, 225, 0.5);
+  font-size: 14px;
+  margin-top: 16px;
+  letter-spacing: 1px;
+}
+
 .auth-gate-form {
   display: flex;
   flex-direction: column;
@@ -137,6 +162,42 @@
 
 .auth-gate-btn:active {
   transform: translateY(0);
+}
+
+.auth-gate-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* 登录/注册模式切换 */
+.auth-gate-switch {
+  color: rgba(236, 232, 225, 0.5);
+  font-size: 13px;
+  margin-top: 20px;
+  letter-spacing: 0.5px;
+}
+
+.auth-gate-switch-btn {
+  background: none;
+  border: none;
+  color: #FF4655;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 4px;
+  text-decoration: underline;
+  transition: opacity 0.2s ease;
+}
+
+.auth-gate-switch-btn:hover {
+  opacity: 0.8;
+}
+
+.auth-gate-switch-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 @keyframes shake {
