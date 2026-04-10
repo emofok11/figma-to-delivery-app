@@ -1,7 +1,12 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
+import { useToast } from './Toast';
+import OtpInput, { OtpInputHandle } from './OtpInput';
 import './AuthGate.css';
+
+/** 认证步骤：登录/注册表单 → OTP 验证 */
+type AuthStep = 'form' | 'otp';
 
 /** 认证模式：登录 / 注册 */
 type AuthMode = 'login' | 'register';
@@ -21,13 +26,27 @@ const isValidPassword = (password: string): boolean =>
   password.length >= 8 && /[a-zA-Z]/.test(password) && /\d/.test(password);
 
 /**
+ * 邮箱脱敏显示（如 t***@gmail.com）
+ */
+const maskEmail = (email: string): string => {
+  const [local, domain] = email.split('@');
+  if (!domain) return email;
+  // 取首字符 + *** + @ + 域名
+  return `${local[0]}***@${domain}`;
+};
+
+/**
  * 将 Supabase 错误信息转译为中文提示
- * 登录时统一显示"邮箱或密码错误"，防止账号探测
+ * 登录时对"邮箱未验证"特殊处理，其余统一显示"邮箱或密码错误"
  */
 const translateError = (message: string, mode: AuthMode): string => {
   // 频率限制
   if (message.includes('rate limit') || message.includes('too many requests')) {
     return '操作过于频繁，请稍后再试';
+  }
+  // 邮箱未验证（登录时特殊处理）
+  if (message.includes('Email not confirmed')) {
+    return 'ACCOUNT_NOT_CONFIRMED';
   }
   // 注册：邮箱已存在
   if (mode === 'register' && message.includes('already registered')) {
@@ -46,17 +65,29 @@ const translateError = (message: string, mode: AuthMode): string => {
 
 /**
  * 认证门禁组件
- * 未登录时显示登录/注册表单，已登录时渲染子组件
+ * 支持流程：登录/注册表单 → OTP 验证码验证
  */
 const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
-  const { user, loading, sessionExpired, clearSessionExpired } = useAuth();
+  const {
+    user, loading, sessionExpired, networkError,
+    clearSessionExpired, retrySessionRecovery,
+    verifyOtp, resendOtp, resendVerification,
+  } = useAuth();
+  const { showSuccess, showError } = useToast();
 
+  // 表单状态
+  const [step, setStep] = useState<AuthStep>('form');
   const [mode, setMode] = useState<AuthMode>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState(''); // 注册时的确认密码
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+
+  // OTP 验证状态
+  const [otpVerifying, setOtpVerifying] = useState(false);    // 验证码验证中
+  const [resendCooldown, setResendCooldown] = useState(0);     // 重发冷却倒计时（秒）
+  const otpInputRef = useRef<OtpInputHandle>(null); // OTP 输入框引用
 
   /** 切换登录/注册模式 */
   const toggleMode = useCallback(() => {
@@ -65,6 +96,17 @@ const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
     setEmail('');
     setPassword('');
     setConfirmPassword('');
+    setStep('form');
+  }, []);
+
+  /** 返回登录表单（从 OTP 验证界面） */
+  const backToLogin = useCallback(() => {
+    setStep('form');
+    setMode('login');
+    setError('');
+    setPassword('');
+    setConfirmPassword('');
+    setOtpVerifying(false);
   }, []);
 
   /** 前端表单验证 */
@@ -79,11 +121,25 @@ const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
     return null;
   }, [email, password, confirmPassword, mode]);
 
+  /** 进入 OTP 验证步骤 */
+  const enterOtpStep = useCallback(() => {
+    setStep('otp');
+    setResendCooldown(60); // 进入验证步骤即开始 60 秒冷却
+  }, []);
+
+  /** 重发验证码冷却倒计时 */
+  React.useEffect(() => {
+    if (resendCooldown <= 0) return;
+    const timer = setTimeout(() => {
+      setResendCooldown(prev => prev - 1);
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [resendCooldown]);
+
   /** 提交表单：登录或注册 */
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // 前端验证
     const validationError = validate();
     if (validationError) {
       setError(validationError);
@@ -101,26 +157,66 @@ const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
           password,
         });
         if (authError) {
-          setError(translateError(authError.message, 'login'));
+          const translated = translateError(authError.message, 'login');
+          // 检测"邮箱未验证"错误 → 引导至验证码步骤
+          if (translated === 'ACCOUNT_NOT_CONFIRMED') {
+            setError('账号未验证，请先验证邮箱');
+            // 自动发送验证码并跳转到 OTP 界面
+            const sent = await resendVerification(email.trim());
+            if (sent) {
+              showSuccess('验证码已发送至您的邮箱');
+              enterOtpStep();
+            }
+          } else {
+            setError(translated);
+          }
+        } else {
+          // 登录成功
+          showSuccess('登录成功，欢迎回来');
         }
-        // 登录成功后 onAuthStateChange 会自动更新 user 状态
       } else {
         // ===== 注册 =====
-        const { error: authError } = await supabase.auth.signUp({
+        const { data, error: authError } = await supabase.auth.signUp({
           email: email.trim(),
           password,
         });
         if (authError) {
           setError(translateError(authError.message, 'register'));
+        } else if (!data.session) {
+          // 注册成功，需邮箱确认 → 进入 OTP 验证步骤
+          showSuccess('注册成功，验证码已发送至您的邮箱');
+          enterOtpStep();
         }
-        // 注册成功后 Supabase 自动登录，onAuthStateChange 更新状态
+        // data.session 存在 → 自动登录成功，onAuthStateChange 会更新状态
       }
     } catch {
       setError('操作失败，请检查网络后重试');
     } finally {
       setSubmitting(false);
     }
-  }, [email, password, mode, validate]);
+  }, [email, password, mode, validate, showSuccess, resendVerification, enterOtpStep]);
+
+  /** OTP 验证码输入完成回调（6位全部填入后自动触发） */
+  const handleOtpComplete = useCallback(async (code: string) => {
+    setOtpVerifying(true);
+    const success = await verifyOtp(email.trim(), code);
+    if (success) {
+      // 验证成功，onAuthStateChange 会更新 user 状态，自动跳转
+    } else {
+      // 验证失败，清空输入框
+      otpInputRef.current?.clear();
+    }
+    setOtpVerifying(false);
+  }, [email, verifyOtp]);
+
+  /** 重新发送验证码 */
+  const handleResend = useCallback(async () => {
+    if (resendCooldown > 0) return;
+    const success = await resendOtp(email.trim());
+    if (success) {
+      setResendCooldown(60); // 重新开始 60 秒冷却
+    }
+  }, [email, resendCooldown, resendOtp]);
 
   // ===== 初始化加载中 =====
   if (loading) {
@@ -130,6 +226,12 @@ const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
           <h1 className="auth-gate-title">VALM OS</h1>
           <p className="auth-gate-subtitle">TACTICAL DESIGN SYSTEM</p>
           <p className="auth-gate-loading">正在恢复会话...</p>
+          {/* 网络异常时显示重试按钮 */}
+          {networkError && (
+            <button className="auth-gate-btn" onClick={retrySessionRecovery}>
+              重试
+            </button>
+          )}
         </div>
       </div>
     );
@@ -140,7 +242,7 @@ const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
     return <>{children}</>;
   }
 
-  // ===== 未登录，显示登录/注册表单 =====
+  // ===== 未登录，显示认证界面 =====
   return (
     <div className="auth-gate-overlay">
       <div className="auth-gate-card">
@@ -148,83 +250,134 @@ const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
         <p className="auth-gate-subtitle">TACTICAL DESIGN SYSTEM</p>
 
         {/* 会话过期提示 */}
-        {sessionExpired && (
+        {sessionExpired && step === 'form' && (
           <p className="auth-gate-expired" onClick={clearSessionExpired}>
             登录已过期，请重新登录
           </p>
         )}
 
-        <form className="auth-gate-form" onSubmit={handleSubmit}>
-          {/* 邮箱输入 */}
-          <div className="auth-gate-input-wrapper">
-            <label className="auth-gate-input-label">邮箱</label>
-            <input
-              className={`auth-gate-input ${error && !email.trim() ? 'error' : ''}`}
-              type="email"
-              placeholder="请输入邮箱地址..."
-              value={email}
-              onChange={(e) => { setEmail(e.target.value); setError(''); }}
-              autoFocus
-              disabled={submitting}
-            />
-          </div>
+        {/* ===== 步骤1：登录/注册表单 ===== */}
+        {step === 'form' && (
+          <>
+            <form className="auth-gate-form" onSubmit={handleSubmit}>
+              {/* 邮箱输入 */}
+              <div className="auth-gate-input-wrapper">
+                <label className="auth-gate-input-label">邮箱</label>
+                <input
+                  className={`auth-gate-input ${error && !email.trim() ? 'error' : ''}`}
+                  type="email"
+                  placeholder="请输入邮箱地址..."
+                  value={email}
+                  onChange={(e) => { setEmail(e.target.value); setError(''); }}
+                  autoFocus
+                  disabled={submitting}
+                />
+              </div>
 
-          {/* 密码输入 */}
-          <div className="auth-gate-input-wrapper">
-            <label className="auth-gate-input-label">密码</label>
-            <input
-              className={`auth-gate-input ${error && !password ? 'error' : ''}`}
-              type="password"
-              placeholder={mode === 'register' ? '至少8位，包含字母和数字' : '请输入密码...'}
-              value={password}
-              onChange={(e) => { setPassword(e.target.value); setError(''); }}
-              disabled={submitting}
-            />
-          </div>
+              {/* 密码输入 */}
+              <div className="auth-gate-input-wrapper">
+                <label className="auth-gate-input-label">密码</label>
+                <input
+                  className={`auth-gate-input ${error && !password ? 'error' : ''}`}
+                  type="password"
+                  placeholder={mode === 'register' ? '至少8位，包含字母和数字' : '请输入密码...'}
+                  value={password}
+                  onChange={(e) => { setPassword(e.target.value); setError(''); }}
+                  disabled={submitting}
+                />
+              </div>
 
-          {/* 确认密码（仅注册模式） */}
-          {mode === 'register' && (
-            <div className="auth-gate-input-wrapper">
-              <label className="auth-gate-input-label">确认密码</label>
-              <input
-                className={`auth-gate-input ${error && password !== confirmPassword ? 'error' : ''}`}
-                type="password"
-                placeholder="请再次输入密码..."
-                value={confirmPassword}
-                onChange={(e) => { setConfirmPassword(e.target.value); setError(''); }}
+              {/* 确认密码（仅注册模式） */}
+              {mode === 'register' && (
+                <div className="auth-gate-input-wrapper">
+                  <label className="auth-gate-input-label">确认密码</label>
+                  <input
+                    className={`auth-gate-input ${error && password !== confirmPassword ? 'error' : ''}`}
+                    type="password"
+                    placeholder="请再次输入密码..."
+                    value={confirmPassword}
+                    onChange={(e) => { setConfirmPassword(e.target.value); setError(''); }}
+                    disabled={submitting}
+                  />
+                </div>
+              )}
+
+              {/* 错误提示 */}
+              {error && <p className="auth-gate-error">{error}</p>}
+
+              {/* 提交按钮 */}
+              <button
+                className="auth-gate-btn"
+                type="submit"
                 disabled={submitting}
-              />
-            </div>
-          )}
+              >
+                {submitting
+                  ? (mode === 'login' ? '登录中...' : '注册中...')
+                  : (mode === 'login' ? '登录' : '注册')
+                }
+              </button>
+            </form>
 
-          {/* 错误提示 */}
-          {error && <p className="auth-gate-error">{error}</p>}
+            {/* 模式切换链接 */}
+            <p className="auth-gate-switch">
+              {mode === 'login' ? '还没有账号？' : '已有账号？'}
+              <button
+                className="auth-gate-switch-btn"
+                type="button"
+                onClick={toggleMode}
+                disabled={submitting}
+              >
+                {mode === 'login' ? '立即注册' : '返回登录'}
+              </button>
+            </p>
+          </>
+        )}
 
-          {/* 提交按钮 */}
-          <button
-            className="auth-gate-btn"
-            type="submit"
-            disabled={submitting}
-          >
-            {submitting
-              ? (mode === 'login' ? '登录中...' : '注册中...')
-              : (mode === 'login' ? '登录' : '注册')
-            }
-          </button>
-        </form>
+        {/* ===== 步骤2：OTP 验证码输入 ===== */}
+        {step === 'otp' && (
+          <div className="auth-gate-otp">
+            {/* 提示文字 */}
+            <p className="auth-gate-otp-hint">
+              验证码已发送至 <strong>{maskEmail(email.trim())}</strong>
+            </p>
 
-        {/* 模式切换链接 */}
-        <p className="auth-gate-switch">
-          {mode === 'login' ? '还没有账号？' : '已有账号？'}
-          <button
-            className="auth-gate-switch-btn"
-            type="button"
-            onClick={toggleMode}
-            disabled={submitting}
-          >
-            {mode === 'login' ? '立即注册' : '返回登录'}
-          </button>
-        </p>
+            {/* 6 位验证码输入框 */}
+            <OtpInput
+              ref={otpInputRef}
+              onComplete={handleOtpComplete}
+              disabled={otpVerifying}
+            />
+
+            {/* 验证中状态提示 */}
+            {otpVerifying && (
+              <p className="auth-gate-otp-verifying">验证中...</p>
+            )}
+
+            {/* 重新发送验证码按钮 */}
+            <button
+              className="auth-gate-otp-resend"
+              type="button"
+              onClick={handleResend}
+              disabled={resendCooldown > 0}
+            >
+              {resendCooldown > 0
+                ? `重新发送 (${resendCooldown}s)`
+                : '重新发送验证码'
+              }
+            </button>
+
+            {/* 返回登录 */}
+            <p className="auth-gate-switch">
+              <button
+                className="auth-gate-switch-btn"
+                type="button"
+                onClick={backToLogin}
+              >
+                返回登录
+              </button>
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

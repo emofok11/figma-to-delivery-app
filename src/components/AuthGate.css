@@ -72,6 +72,27 @@
   opacity: 0.8;
 }
 
+/* 注册后邮箱确认提示 */
+.auth-gate-confirm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.auth-gate-confirm-text {
+  color: rgba(236, 232, 225, 0.8);
+  font-size: 14px;
+  line-height: 1.6;
+  text-align: center;
+  margin: 0;
+}
+
+.auth-gate-confirm-text strong {
+  color: #FF4655;
+  word-break: break-all;
+}
+
 /* 加载状态文字 */
 .auth-gate-loading {
   color: rgba(236, 232, 225, 0.5);
@@ -196,6 +217,60 @@
 }
 
 .auth-gate-switch-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ===== OTP 验证码步骤样式 ===== */
+
+/* OTP 验证区域容器 */
+.auth-gate-otp {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+/* 验证码提示文字（含脱敏邮箱） */
+.auth-gate-otp-hint {
+  color: rgba(236, 232, 225, 0.7);
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.auth-gate-otp-hint strong {
+  color: #FF4655;
+  word-break: break-all;
+}
+
+/* 验证中状态文字 */
+.auth-gate-otp-verifying {
+  color: rgba(236, 232, 225, 0.5);
+  font-size: 13px;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+/* 重新发送验证码按钮 */
+.auth-gate-otp-resend {
+  background: none;
+  border: 1px solid rgba(236, 232, 225, 0.15);
+  border-radius: 2px;
+  color: rgba(236, 232, 225, 0.6);
+  font-size: 13px;
+  padding: 8px 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: 0.5px;
+}
+
+.auth-gate-otp-resend:hover:not(:disabled) {
+  border-color: #FF4655;
+  color: #FF4655;
+}
+
+.auth-gate-otp-resend:disabled {
   opacity: 0.4;
   cursor: not-allowed;
 }

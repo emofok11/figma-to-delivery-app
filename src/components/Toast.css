@@ -1,0 +1,60 @@
+/* Toast 提示组件样式 — 与 Tactical Design 暗色调一致 */
+
+/* 容器：固定在页面顶部居中，非模态 */
+.toast-container {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 24px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  animation: toast-in 0.3s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(12px);
+  max-width: 90vw;
+  white-space: nowrap;
+}
+
+/* 成功样式（绿色） */
+.toast-success {
+  background: rgba(72, 187, 120, 0.15);
+  border: 1px solid rgba(72, 187, 120, 0.4);
+  color: #48bb78;
+}
+
+/* 错误样式（红色） */
+.toast-error {
+  background: rgba(255, 70, 85, 0.15);
+  border: 1px solid rgba(255, 70, 85, 0.4);
+  color: #FF4655;
+}
+
+/* 类型图标 */
+.toast-icon {
+  font-size: 16px;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+/* 提示内容 */
+.toast-message {
+  line-height: 1.4;
+}
+
+/* 入场动画 */
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}

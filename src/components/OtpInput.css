@@ -1,0 +1,49 @@
+/* OTP 验证码输入框样式 — 与 Tactical Design 暗色调一致 */
+
+/* 输入框容器 */
+.otp-input-wrapper {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 单个输入框 */
+.otp-input-box {
+  width: 44px;
+  height: 52px;
+  text-align: center;
+  font-size: 22px;
+  font-weight: 600;
+  color: #ECE8E1;
+  background: rgba(236, 232, 225, 0.06);
+  border: 1px solid rgba(236, 232, 225, 0.12);
+  border-radius: 2px;
+  outline: none;
+  transition: all 0.2s ease;
+  caret-color: #FF4655;
+}
+
+.otp-input-box::placeholder {
+  color: rgba(236, 232, 225, 0.15);
+}
+
+/* 聚焦状态 */
+.otp-input-box:focus {
+  border-color: #FF4655;
+  background: rgba(236, 232, 225, 0.08);
+  box-shadow: 0 0 0 3px rgba(255, 70, 85, 0.15);
+}
+
+/* 禁用状态 */
+.otp-input-box:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 移除数字输入框的上下箭头（虽然 type=text 不会出现，保险起见） */
+.otp-input-box::-webkit-inner-spin-button,
+.otp-input-box::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
