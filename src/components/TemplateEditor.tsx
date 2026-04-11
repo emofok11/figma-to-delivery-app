@@ -103,10 +103,14 @@ function descriptionPlainTextToHtml(value: string): string {
   const normalizedText = value.replace(/\r\n/g, '\n');
   if (!normalizedText.trim()) return '';
 
-  // 这里保持“纯文本 + 换行”的模型，避免列表渲染后的 HTML 与键盘编辑逻辑使用不同文本语义。
-  return escapeDescriptionHtml(normalizedText).replace(/\n/g, '<br>');
+  // 这里保持"纯文本 + 换行"的模型，避免列表渲染后的 HTML 与键盘编辑逻辑使用不同文本语义。
+  // 行首空格（续行缩进）用 &nbsp; 保留，避免 HTML 连续空格被浏览器折叠。
+  const escaped = escapeDescriptionHtml(normalizedText).replace(/\n /g, (match) => {
+    const spaces = match.slice(1); // 去掉 \n，只处理空格
+    return '<br>' + spaces.replace(/ /g, '&nbsp;');
+  });
+  return escaped.replace(/\n/g, '<br>');
 }
-
 // 将富文本 HTML 还原为纯文本，便于复用现有项目符号解析逻辑。
 function descriptionHtmlToPlainText(value?: string): string {
   const normalizedValue = stripDescriptionEditorTrailingBreak(value);

@@ -49,10 +49,15 @@ function escapeDescriptionHtml(value: string): string {
 }
 
 // 将纯文本描述转成带 <br> 的 HTML，便于和富文本走同一套解析流程。
+// 行首空格（续行缩进）用 &nbsp; 保留，避免 HTML 连续空格被浏览器折叠。
 function descriptionPlainTextToHtml(value: string): string {
   const normalizedText = value.replace(/\r\n/g, '\n');
   if (!normalizedText) return '';
-  return escapeDescriptionHtml(normalizedText).replace(/\n/g, '<br>');
+  const escaped = escapeDescriptionHtml(normalizedText).replace(/\n /g, (match) => {
+    const spaces = match.slice(1);
+    return '<br>' + spaces.replace(/ /g, '&nbsp;');
+  });
+  return escaped.replace(/\n/g, '<br>');
 }
 
 interface DescriptionCharToken {
@@ -304,6 +309,7 @@ function renderDescriptionRichText(value: string | undefined, fallbackColor: str
   let currentText = '';
   let currentColor: string | undefined;
   let segmentIndex = 0;
+  let afterNewline = true; // 追踪是否处于换行后的行首位置
 
   const flushSegment = () => {
     if (!currentText) return;
@@ -326,6 +332,7 @@ function renderDescriptionRichText(value: string | undefined, fallbackColor: str
       flushSegment();
       nodes.push(<br key={`${keyPrefix}-break-${index}`} />);
       currentColor = undefined;
+      afterNewline = true;
       return;
     }
 
@@ -338,7 +345,14 @@ function renderDescriptionRichText(value: string | undefined, fallbackColor: str
       currentColor = normalizedColor;
     }
 
-    currentText += token.char;
+    // 换行后的前导空格用 \u00A0 渲染，避免 HTML 连续空格折叠导致续行不对齐
+    if (afterNewline && token.char === ' ') {
+      currentText += '\u00A0';
+    } else {
+      currentText += token.char;
+    }
+
+    afterNewline = false;
   });
 
   flushSegment();
