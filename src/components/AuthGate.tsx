@@ -198,7 +198,7 @@ const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
           // 检测"邮箱未验证"错误 → 直接提示（暂不跳转OTP验证）
           else if (translated === 'ACCOUNT_NOT_CONFIRMED') {
             setError('账号未验证，请联系管理员或稍后重试');
-          }          } else {
+          } else {
             setError(translated);
           }
         } else {
