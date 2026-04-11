@@ -402,20 +402,15 @@ const UserManagement: React.FC<UserManagementProps> = ({ onBack }) => {
                           解封
                         </button>
                       ) : (
-                        <button
-                          className="um-action-btn ban"
-                          onClick={() => openModal('ban', u)}
-                          disabled={isSelf(u.id) || isTargetAdmin(u)}
-                          title={
-                            isSelf(u.id)
-                              ? '不能封禁自己'
-                              : isTargetAdmin(u)
-                                ? '管理员不可封禁，请先降级为普通用户'
-                                : ''
-                          }
-                        >
-                          封禁
-                        </button>
+                        /* 自己和管理员/超级管理员不显示封禁按钮 */
+                        !isSelf(u.id) && !isTargetAdmin(u) && (
+                          <button
+                            className="um-action-btn ban"
+                            onClick={() => openModal('ban', u)}
+                          >
+                            封禁
+                          </button>
+                        )
                       )}
                       {/* 仅超级管理员可变更角色 */}
                       {isSuperAdmin && !isSelf(u.id) && u.role !== 'super_admin' && (

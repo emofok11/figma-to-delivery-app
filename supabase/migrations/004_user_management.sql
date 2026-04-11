@@ -17,11 +17,18 @@ DO $$ BEGIN
     WHERE table_schema = 'public'
       AND table_name = 'profiles'
       AND column_name = 'role'
-      AND data_type = 'character varying'
+      AND data_type IN ('text', 'character varying')
   ) THEN
+    -- 先移除旧的 CHECK 约束（如果存在）
+    ALTER TABLE public.profiles DROP CONSTRAINT IF EXISTS profiles_role_check;
+    -- 将 TEXT/VARCHAR 转为 ENUM
+    ALTER TABLE public.profiles
+      ALTER COLUMN role DROP DEFAULT;
     ALTER TABLE public.profiles
       ALTER COLUMN role TYPE public.user_role
       USING role::public.user_role;
+    ALTER TABLE public.profiles
+      ALTER COLUMN role SET DEFAULT 'user';
   END IF;
 END $$;
 
