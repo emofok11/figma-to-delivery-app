@@ -505,7 +505,7 @@ export const DocumentPreview: React.FC<DocumentPreviewProps> = ({
           {allPoints.map((point, index) => {
             const markerColor = point.markerColor || fallbackColor;
             const baseColor = point.baseColor || markerColor;
-            const isBullet = point.isBullet !== false; // 默认为bullet（兼容旧数据）
+            const isBullet = point.isBullet === true; // 只有明确标记为bullet的点才显示项目符号
 
             const textContent = point.lines.map((lineTokens, lineIndex) => (
               <React.Fragment key={`${moduleId}-${index}-line-${lineIndex}`}>
