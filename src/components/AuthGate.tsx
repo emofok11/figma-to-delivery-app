@@ -315,7 +315,6 @@ const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
             <form className="auth-gate-form" onSubmit={handleSubmit}>
               {/* 邮箱输入 */}
               <div className="auth-gate-input-wrapper">
-                <label className="auth-gate-input-label">邮箱</label>
                 <input
                   className={`auth-gate-input ${error && !email.trim() ? 'error' : ''}`}
                   type="email"
@@ -329,7 +328,6 @@ const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
 
               {/* 密码输入 */}
               <div className="auth-gate-input-wrapper">
-                <label className="auth-gate-input-label">密码</label>
                 <input
                   className={`auth-gate-input ${error && !password ? 'error' : ''}`}
                   type="password"
@@ -343,7 +341,6 @@ const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
               {/* 确认密码（仅注册模式） */}
               {mode === 'register' && (
                 <div className="auth-gate-input-wrapper">
-                  <label className="auth-gate-input-label">确认密码</label>
                   <input
                     className={`auth-gate-input ${error && password !== confirmPassword ? 'error' : ''}`}
                     type="password"
@@ -367,8 +364,8 @@ const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
                 {submitCooldown > 0
                   ? `请稍候 (${submitCooldown}s)`
                   : submitting
-                    ? (mode === 'login' ? '登录中...' : '注册中...')
-                    : (mode === 'login' ? '登录' : '注册')
+                    ? (mode === 'login' ? '验证中...' : '注册中...')
+                    : (mode === 'login' ? '进入作战系统' : '立即注册')
                 }
               </button>
             </form>

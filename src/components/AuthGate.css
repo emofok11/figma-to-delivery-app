@@ -55,9 +55,6 @@
   text-transform: uppercase;
 }
 
-/* 会话过期提示 */
-.auth-gate-expired {
-
 /* 环境标识徽章（非正式环境时显示） */
 .auth-gate-env-badge {
   display: inline-block;
