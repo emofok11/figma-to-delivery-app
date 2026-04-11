@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from './Toast';
 import OtpInput, { OtpInputHandle } from './OtpInput';
+import { getSupabaseConfig } from '../lib/supabaseConfig';
 import './AuthGate.css';
 
 /** 认证步骤：登录/注册表单 → OTP 验证 */
@@ -74,6 +75,9 @@ const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
     verifyOtp, resendOtp,
   } = useAuth();
   const { showSuccess, showError } = useToast();
+
+  // 当前服务器环境标识
+  const serverConfig = getSupabaseConfig();
 
   // 表单状态
   const [step, setStep] = useState<AuthStep>('form');
@@ -297,6 +301,9 @@ const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
       <div className="auth-gate-card">
         <h1 className="auth-gate-title">VALM OS</h1>
         <p className="auth-gate-subtitle">TACTICAL DESIGN SYSTEM</p>
+        {!serverConfig.isProduction && (
+          <p className="auth-gate-env-badge">{serverConfig.label}</p>
+        )}
 
         {/* 会话过期提示 */}
         {sessionExpired && step === 'form' && (
