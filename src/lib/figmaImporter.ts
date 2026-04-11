@@ -326,7 +326,7 @@ export async function createTemplateFromFigma(
   };
   
   const template: TemplateDefinition = {
-    id: `template-figma-${Date.now()}`,
+    id: `${Date.now()}`,
     name,
     description: options?.description || `从Figma导入的模版 - ${figmaData.name}`,
     category,

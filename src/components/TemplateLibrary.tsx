@@ -439,7 +439,7 @@ export const TemplateLibrary: React.FC<TemplateLibraryProps> = ({
       );
       
       newTemplate = {
-        id: `template-custom-${Date.now()}`,
+        id: `${Date.now()}`,
         name: data.name,
         description: data.description || '自定义模板',
         category: data.category,
@@ -467,7 +467,7 @@ export const TemplateLibrary: React.FC<TemplateLibraryProps> = ({
         // 用户选择的分类优先，否则用推断结果
         const finalCategory = data.category !== 'other' ? data.category : analysisResult.suggestedCategory;
         newTemplate = {
-          id: `template-img-${Date.now()}`,
+          id: `${Date.now()}`,
           name: data.name,
           description: data.description || `从图片解析创建的模板（推断分类：${finalCategory}）`,
           category: finalCategory,
@@ -596,7 +596,7 @@ export const TemplateLibrary: React.FC<TemplateLibraryProps> = ({
     })) : undefined;
 
     return {
-      id: `template-${Date.now()}`,
+      id: `${Date.now()}`,
       name: data.name,
       description: data.description || `从参考模板「${refTemplate.name}」克隆的框架结构`,
       category: data.category,
@@ -618,7 +618,7 @@ export const TemplateLibrary: React.FC<TemplateLibraryProps> = ({
   const createBasicTemplate = (data: any, nodeId: string): TemplateDefinition => {
     const now = new Date().toISOString();
     return {
-      id: `template-${Date.now()}`,
+      id: `${Date.now()}`,
       name: data.name,
       description: data.description,
       category: data.category,

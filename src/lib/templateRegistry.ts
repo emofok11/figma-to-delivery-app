@@ -106,7 +106,7 @@ class TemplateRegistry {
   ): TemplateDefinition {
     const now = new Date().toISOString();
     const template: TemplateDefinition = {
-      id: `template-${Date.now()}`,
+      id: `${Date.now()}`,
       name,
       description: config.description || '新模版',
       category,
