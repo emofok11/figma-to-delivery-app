@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useMemo, useEffect, useLayoutEffect, useRef } from 'react';
 import { TemplateDefinition, ImageData, ContainerPart } from '../types/template';
 import { generateDynamicSkill } from '../lib/templateSkills';
 import { isFieldVisible, getTodayVersion } from '../lib/templateUtils'; // 引入公共过滤函数
@@ -951,6 +951,20 @@ const skipNextDescriptionInputRef = useRef<Record<string, boolean>>({}); // 防�
     });
   }, []);
 
+  // React commit DOM 后同步恢复光标，确保 dangerouslySetInnerHTML 重写 DOM 后光标位置正确。
+  // useLayoutEffect 在浏览器绘制前同步执行，不会出现 requestAnimationFrame 的时序竞争。
+  useLayoutEffect(() => {
+    const { fieldId } = activeDescriptionSelection;
+    if (!fieldId) return;
+    const target = descriptionEditorRefs.current[fieldId];
+    if (!target || document.activeElement !== target) return;
+    const pendingSelection = descriptionSelectionRangesRef.current[fieldId];
+    if (!pendingSelection) return;
+    // 仅当 DOM 中的实际光标位置与预期不一致时才恢复
+    const currentSelection = getDescriptionSelectionOffsets(target);
+    if (currentSelection && currentSelection.start === pendingSelection.start && currentSelection.end === pendingSelection.end) return;
+    setDescriptionSelectionOffsets(target, pendingSelection.start, pendingSelection.end);
+  }, [activeDescriptionSelection]);
   const captureDescriptionSnapshot = useCallback((
     fieldId: string,
     valueOverride?: string,
