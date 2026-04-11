@@ -58,11 +58,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setSession(currentSession);
       setUser(currentSession?.user ?? null);
 
-      // 检查管理员状态
+      // 检查管理员状态（失败时静默处理，不影响正常会话恢复）
       if (currentSession?.user) {
         setAdminLoading(true);
-        const admin = await checkIsAdmin(currentSession.user.id);
-        setIsAdminState(admin);
+        try {
+          const admin = await checkIsAdmin(currentSession.user.id);
+          setIsAdminState(admin);
+        } catch {
+          setIsAdminState(false);
+        }
         setAdminLoading(false);
       } else {
         setIsAdminState(false);
@@ -94,10 +98,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser(newSession?.user ?? null);
         setNetworkError(false);
 
-        // 同步管理员状态
+        // 同步管理员状态（失败时静默处理）
         if (newSession?.user) {
-          const admin = await checkIsAdmin(newSession.user.id);
-          setIsAdminState(admin);
+          try {
+            const admin = await checkIsAdmin(newSession.user.id);
+            setIsAdminState(admin);
+          } catch {
+            setIsAdminState(false);
+          }
         } else {
           setIsAdminState(false);
         }

@@ -20,50 +20,41 @@ ALTER TABLE public.profiles
 -- 3. 删除旧的宽松 SELECT 策略，替换为管理员可查全部 + 普通用户只能查自己
 DROP POLICY IF EXISTS "profiles_select_authenticated" ON public.profiles;
 
+-- 创建 SECURITY DEFINER 辅助函数，绕过 RLS 递归查询
+-- 直接用 superuser 权限检查 role，避免 RUSING 子查询自身被 RLS 拦截
+CREATE OR REPLACE FUNCTION public.is_admin(check_uid UUID)
+RETURNS BOOLEAN
+LANGUAGE sql
+SECURITY DEFINER
+STABLE
+AS $$
+  SELECT EXISTS (SELECT 1 FROM public.profiles WHERE id = check_uid AND role = 'admin');
+$$;
+
 -- 普通用户只能查自己的 profile
 CREATE POLICY "profiles_select_own"
   ON public.profiles FOR SELECT
   TO authenticated
   USING (auth.uid() = id);
 
--- 管理员可查所有 profile
+-- 管理员可查所有 profile（通过 SECURITY DEFINER 函数避免递归）
 CREATE POLICY "profiles_select_admin"
   ON public.profiles FOR SELECT
   TO authenticated
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.profiles
-      WHERE id = auth.uid() AND role = 'admin'
-    )
-  );
+  USING (public.is_admin(auth.uid()));
 
 -- 4. 管理员可更新任意 profile（封禁/解封/改名/角色变更）
 CREATE POLICY "profiles_update_admin"
   ON public.profiles FOR UPDATE
   TO authenticated
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.profiles
-      WHERE id = auth.uid() AND role = 'admin'
-    )
-  )
-  WITH CHECK (
-    EXISTS (
-      SELECT 1 FROM public.profiles
-      WHERE id = auth.uid() AND role = 'admin'
-    )
-  );
+  USING (public.is_admin(auth.uid()))
+  WITH CHECK (public.is_admin(auth.uid()));
 
 -- 5. 管理员可删除任意 profile
 CREATE POLICY "profiles_delete_admin"
   ON public.profiles FOR DELETE
   TO authenticated
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.profiles
-      WHERE id = auth.uid() AND role = 'admin'
-    )
-  );
+  USING (public.is_admin(auth.uid()));
 
 -- 6. 更新触发器：自动创建 profile 时设置默认 role
 CREATE OR REPLACE FUNCTION public.handle_new_user()
