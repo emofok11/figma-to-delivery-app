@@ -3,6 +3,7 @@ import * as htmlToImage from 'html-to-image';
 import { TemplateDefinition, TemplateCategory, ImageData, TemplateHistoryRecord, ContainerPart, TextFieldConfig, ImageSlotConfig } from '../types/template';
 import { templateRegistry, categoryLabels } from '../lib/templateRegistry';
 import { createTemplateFromFigma } from '../lib/figmaImporter';
+import { getTodayVersion } from '../lib/templateUtils';
 import { analyzeImage } from '../lib/imageAnalyzer';
 import { supabaseService } from '../lib/supabaseService';
 import TemplateEditor from './TemplateEditor';
@@ -415,6 +416,27 @@ export const TemplateLibrary: React.FC<TemplateLibraryProps> = ({
           });
         });
       });
+
+      // 在 textFields 开头插入主题名称和版本信息（与内置模板结构一致）
+      const todayVersion = getTodayVersion();
+      textFields.unshift(
+        {
+          id: 'overall-version-info',
+          label: '版本信息',
+          placeholder: todayVersion,
+          defaultValue: todayVersion,
+          required: false,
+          maxLength: 30
+        },
+        {
+          id: 'overall-theme-name',
+          label: '主题名称',
+          placeholder: '请输入主题名称',
+          defaultValue: data.name,
+          required: true,
+          maxLength: 50
+        }
+      );
       
       newTemplate = {
         id: `template-custom-${Date.now()}`,
@@ -425,7 +447,7 @@ export const TemplateLibrary: React.FC<TemplateLibraryProps> = ({
         status: 'draft',
         createdAt: now,
         updatedAt: now,
-        version: '1.0.0',
+        version: todayVersion,
         textFields,
         imageSlots,
         previewLayout: {
@@ -453,8 +475,26 @@ export const TemplateLibrary: React.FC<TemplateLibraryProps> = ({
           status: 'draft',
           createdAt: now,
           updatedAt: now,
-          version: '1.0.0',
-          textFields: analysisResult.textFields,
+          version: getTodayVersion(),
+          textFields: [
+            {
+              id: 'overall-version-info',
+              label: '版本信息',
+              placeholder: getTodayVersion(),
+              defaultValue: getTodayVersion(),
+              required: false,
+              maxLength: 30
+            },
+            {
+              id: 'overall-theme-name',
+              label: '主题名称',
+              placeholder: '请输入主题名称',
+              defaultValue: data.name,
+              required: true,
+              maxLength: 50
+            },
+            ...analysisResult.textFields
+          ],
           imageSlots: analysisResult.imageSlots,
           previewLayout: analysisResult.previewLayout
         };
@@ -533,7 +573,9 @@ export const TemplateLibrary: React.FC<TemplateLibraryProps> = ({
     // 克隆参考模板的所有字段和图片坑位，清空默认值
     const clonedTextFields = refTemplate.textFields.map(field => ({
       ...field,
-      defaultValue: '' // 清空默认值，让用户填写新内容
+      defaultValue: field.id === 'overall-theme-name' ? data.name
+        : field.id === 'overall-version-info' ? getTodayVersion()
+        : '' // 清空默认值，让用户填写新内容
     }));
 
     const clonedImageSlots = refTemplate.imageSlots.map(slot => ({
@@ -559,7 +601,7 @@ export const TemplateLibrary: React.FC<TemplateLibraryProps> = ({
       figmaNodeId: nodeId,
       createdAt: now,
       updatedAt: now,
-      version: '1.0.0',
+      version: getTodayVersion(),
       textFields: clonedTextFields,
       imageSlots: clonedImageSlots,
       previewLayout: { ...refTemplate.previewLayout },
@@ -581,8 +623,24 @@ export const TemplateLibrary: React.FC<TemplateLibraryProps> = ({
       figmaNodeId: nodeId,
       createdAt: now,
       updatedAt: now,
-      version: '1.0.0',
+      version: getTodayVersion(),
       textFields: [
+        {
+          id: 'overall-version-info',
+          label: '版本信息',
+          placeholder: getTodayVersion(),
+          defaultValue: getTodayVersion(),
+          required: false,
+          maxLength: 30
+        },
+        {
+          id: 'overall-theme-name',
+          label: '主题名称',
+          placeholder: '请输入主题名称',
+          defaultValue: data.name,
+          required: true,
+          maxLength: 50
+        },
         {
           id: 'name',
           label: '名称',
