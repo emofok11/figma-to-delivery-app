@@ -7,6 +7,7 @@
  *   - "test"       → 使用测试服务器
  * 
  * 也支持直接通过 VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY 覆盖
+ * 可选通过 VITE_AUTH_EMAIL_REDIRECT_URL 指定认证邮件回跳地址
  */
 
 export type SupabaseEnv = 'production' | 'test';
@@ -23,7 +24,7 @@ const PRODUCTION_CONFIG: SupabaseServerConfig = {
   url: 'https://nrgkpkkomhbxsucombcg.supabase.co',
   // ⚠️ 请替换为真实的 anon key（从 Supabase Dashboard → Settings → API 获取）
   // 合法格式：eyJ 开头的长 JWT token
-  anonKey: 'sb_publishable_0rZgO975JKGLwM2UkyoNuw_5DrV3K54',
+  anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5yZ2twa2tvbWhieHN1Y29tYmNnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3MDc5NzgsImV4cCI6MjA5MTI4Mzk3OH0.-bDBP0ob5I00HBSYL88eZEJV0nMstECWKooz_rVWaD8',
   label: '正式环境',
   isProduction: true,
 };
@@ -33,7 +34,7 @@ const TEST_CONFIG: SupabaseServerConfig = {
   // ⚠️ 请替换为测试服务器的真实 URL
   url: 'https://knxhuvqctgpfblramwmx.supabase.co',
   // ⚠️ 请替换为测试服务器的真实 anon key
-  anonKey: 'sb_publishable_elRmFN4oRl6_WJCgPD9zSw_EvHV0vcM',
+  anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtueGh1dnFjdGdwZmJscmFtd214Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU4MDgwMTUsImV4cCI6MjA5MTM4NDAxNX0.1TiF59cS4SMAbKsvSx5PgrZwuCodJcha7r6sShCQPxQ',
   label: '测试环境',
   isProduction: false,
 };
@@ -61,6 +62,20 @@ export function getSupabaseConfig(): SupabaseServerConfig {
 
   const env = getSupabaseEnv();
   return env === 'test' ? TEST_CONFIG : PRODUCTION_CONFIG;
+}
+
+/** 获取认证邮件中的回跳地址 */
+export function getAuthEmailRedirectUrl(): string | undefined {
+  const envRedirectUrl = import.meta.env.VITE_AUTH_EMAIL_REDIRECT_URL?.trim();
+  if (envRedirectUrl) {
+    return envRedirectUrl;
+  }
+
+  if (typeof window === 'undefined') {
+    return undefined;
+  }
+
+  return new URL(import.meta.env.BASE_URL || '/', window.location.origin).toString();
 }
 
 /** 导出所有服务器配置（供设置页面切换用） */

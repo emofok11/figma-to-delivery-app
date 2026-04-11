@@ -2,7 +2,8 @@ import React, { useState, useCallback, useRef } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from './Toast';
-import { getSupabaseConfig } from '../lib/supabaseConfig';
+import { getAuthEmailRedirectUrl, getSupabaseConfig } from '../lib/supabaseConfig';
+import { checkUsernameUnique, createProfile } from '../lib/profileService';
 import './AuthGate.css';
 
 /** 认证模式：登录 / 注册 */
@@ -21,6 +22,10 @@ const isValidEmail = (email: string): boolean =>
 /** 密码强度校验：至少8位，包含字母和数字 */
 const isValidPassword = (password: string): boolean =>
   password.length >= 8 && /[a-zA-Z]/.test(password) && /\d/.test(password);
+
+/** 用户名格式校验：2-20位，仅中英文、数字、下划线 */
+const isValidUsername = (username: string): boolean =>
+  username.length >= 2 && username.length <= 20 && /^[\u4e00-\u9fa5a-zA-Z0-9_]+$/.test(username);
 
 /**
  * 邮箱脱敏显示（如 t***@gmail.com）
@@ -44,6 +49,10 @@ const translateError = (message: string, mode: AuthMode): string => {
   // 邮箱未验证（登录时特殊处理）
   if (message.includes('Email not confirmed')) {
     return 'ACCOUNT_NOT_CONFIRMED';
+  }
+  // 确认邮件发送失败
+  if (message.includes('Error sending confirmation email')) {
+    return '确认邮件发送失败，请检查邮件服务配置';
   }
   // 注册：邮箱已存在
   if (mode === 'register' && message.includes('already registered')) {
@@ -74,9 +83,13 @@ const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
 
   // 当前服务器环境标识
   const serverConfig = getSupabaseConfig();
+  const authEmailRedirectUrl = getAuthEmailRedirectUrl();
 
   // 表单状态
   const [mode, setMode] = useState<AuthMode>('login');
+  const [username, setUsername] = useState('');
+  const [usernameError, setUsernameError] = useState('');
+  const [checkingUsername, setCheckingUsername] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -100,6 +113,8 @@ const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
     setEmail('');
     setPassword('');
     setConfirmPassword('');
+    setUsername('');
+    setUsernameError('');
     setUnconfirmedEmail('');
   }, []);
 
@@ -111,6 +126,12 @@ const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
 
   /** 前端表单验证 */
   const validate = useCallback((): string | null => {
+    if (mode === 'register') {
+      if (!username.trim()) return '请输入用户名';
+      if (username.trim().length < 2 || username.trim().length > 20) return '用户名长度需在2-20个字符之间';
+      if (!isValidUsername(username.trim())) return '用户名只能包含中英文、数字和下划线';
+      if (usernameError) return usernameError; // 唯一性校验失败时使用其错误信息
+    }
     if (!email.trim()) return '请输入邮箱';
     if (!isValidEmail(email.trim())) return '邮箱格式不正确';
     if (!password) return '请输入密码';
@@ -119,7 +140,7 @@ const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
       if (password !== confirmPassword) return '两次输入的密码不一致';
     }
     return null;
-  }, [email, password, confirmPassword, mode]);
+  }, [username, email, password, confirmPassword, mode, usernameError]);
 
   /** 重发确认邮件冷却倒计时 */
   React.useEffect(() => {
@@ -138,6 +159,21 @@ const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
     }, 1000);
     return () => clearTimeout(timer);
   }, [submitCooldown]);
+
+  /** 用户名失焦时校验唯一性 */
+  const handleUsernameBlur = useCallback(async () => {
+    const trimmed = username.trim();
+    if (!trimmed || !isValidUsername(trimmed)) return; // 格式不对不查唯一性
+    setCheckingUsername(true);
+    setUsernameError('');
+    const isUnique = await checkUsernameUnique(trimmed);
+    setCheckingUsername(false);
+    if (!isUnique) {
+      setUsernameError('该用户名已被占用，请换一个');
+    } else {
+      setUsernameError('');
+    }
+  }, [username]);
 
   /** 提交表单：登录或注册 */
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
@@ -194,9 +230,13 @@ const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
         }
       } else {
         // ===== 注册 =====
+        const signUpOptions = authEmailRedirectUrl
+          ? { emailRedirectTo: authEmailRedirectUrl, data: { username: username.trim() } }
+          : { data: { username: username.trim() } };
         const { data, error: authError } = await supabase.auth.signUp({
           email: email.trim(),
           password,
+          options: signUpOptions,
         });
         if (authError) {
           // 检测429频率限制 → 启动冷却倒计时
@@ -207,14 +247,21 @@ const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
             setError(translateError(authError.message, 'register'));
           }
         } else if (!data.session) {
-          // 注册成功，Supabase 已发送确认邮件，提示用户去邮箱点击链接
+          // 注册成功但未自动登录 → 创建 profile
+          if (data.user) {
+            await createProfile(data.user.id, username.trim());
+          }
+          // Supabase 已发送确认邮件，提示用户去邮箱点击链接
           showSuccess('注册成功！确认邮件已发送，请前往邮箱点击确认链接后再登录');
           // 切换到登录模式
           setMode('login');
           setPassword('');
           setConfirmPassword('');
         }
-        // data.session 存在 → 自动登录成功，onAuthStateChange 会更新状态
+        // data.session 存在 → 自动登录成功，创建 profile 并由 onAuthStateChange 更新状态
+        if (!authError && data.session && data.user) {
+          await createProfile(data.user.id, username.trim());
+        }
       }
     } catch {
       setError('操作失败，请检查网络后重试');
@@ -222,7 +269,7 @@ const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
       submittingRef.current = false;
       setSubmitting(false);
     }
-  }, [email, password, mode, validate, showSuccess, resendVerification]);
+  }, [username, email, password, mode, validate, showSuccess, resendVerification, authEmailRedirectUrl]);
 
   /** 重新发送确认邮件（登录时账号未验证场景） */
   const handleResendVerification = useCallback(async () => {
@@ -282,6 +329,24 @@ const AuthGate: React.FC<AuthGateProps> = ({ children }) => {
         {!unconfirmedEmail && (
           <>
             <form className="auth-gate-form" onSubmit={handleSubmit}>
+              {/* 用户名输入（仅注册模式） */}
+              {mode === 'register' && (
+                <div className="auth-gate-input-wrapper">
+                  <input
+                    className={`auth-gate-input ${usernameError ? 'error' : ''}`}
+                    type="text"
+                    placeholder="请输入用户名..."
+                    value={username}
+                    onChange={(e) => { setUsername(e.target.value); setUsernameError(''); setError(''); }}
+                    onBlur={handleUsernameBlur}
+                    disabled={submitting || checkingUsername}
+                  />
+                  <p className="auth-gate-input-hint">2-20位，中英文、数字、下划线</p>
+                  {checkingUsername && <p className="auth-gate-checking">正在检查用户名...</p>}
+                  {usernameError && <p className="auth-gate-error" style={{ marginTop: '4px' }}>{usernameError}</p>}
+                </div>
+              )}
+
               {/* 邮箱输入 */}
               <div className="auth-gate-input-wrapper">
                 <input

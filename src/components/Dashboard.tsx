@@ -41,10 +41,14 @@ const TOOL_MODULES: ToolModule[] = [
 
 interface DashboardProps {
   onEnterModule: (moduleId: string) => void;
+  onOpenSettings: () => void;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ onEnterModule }) => {
+const Dashboard: React.FC<DashboardProps> = ({ onEnterModule, onOpenSettings }) => {
   const { user, signOut } = useAuth();
+
+  /** 获取显示名称：优先用户名，回退邮箱前缀 */
+  const displayName = user?.user_metadata?.username || (user?.email ? user.email.split('@')[0] : '');
 
   return (
     <div className="dashboard">
@@ -61,7 +65,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onEnterModule }) => {
           {/* 用户信息与登出按钮 */}
           {user && (
             <div className="topbar-user">
-              <span className="topbar-email">{user.email}</span>
+              <span className="topbar-username" onClick={onOpenSettings} title="点击进入用户设置">{displayName}</span>
               <button className="topbar-logout-btn" onClick={signOut}>登出</button>
             </div>
           )}

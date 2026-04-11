@@ -74,13 +74,23 @@
   border-left: 1px solid rgba(255, 255, 255, 0.25);
 }
 
-.topbar-email {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.75);
+.topbar-username {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.9);
   max-width: 160px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 2px;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.topbar-username:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.25);
 }
 
 .topbar-logout-btn {

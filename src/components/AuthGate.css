@@ -165,6 +165,21 @@
   box-shadow: 0 0 0 3px rgba(255, 70, 85, 0.15);
 }
 
+.auth-gate-input-hint {
+  color: rgba(236, 232, 225, 0.35);
+  font-size: 11px;
+  text-align: left;
+  margin: 4px 0 0 4px;
+  letter-spacing: 0.3px;
+}
+
+.auth-gate-checking {
+  color: rgba(236, 232, 225, 0.5);
+  font-size: 11px;
+  text-align: left;
+  margin: 4px 0 0 4px;
+}
+
 .auth-gate-error {
   color: #FF4655;
   font-size: 12px;

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react';
 import { supabase } from '../lib/supabase';
+import { getAuthEmailRedirectUrl } from '../lib/supabaseConfig';
 import type { User, Session } from '@supabase/supabase-js';
 import { useToast, default as Toast } from '../components/Toast';
 
@@ -19,6 +20,7 @@ interface AuthContextType {
   sessionExpired: boolean;                     // 会话是否过期（用于提示用户）
   networkError: boolean;                       // 网络是否异常（用于显示重试按钮）
   signOut: () => Promise<void>;                // 登出方法
+  refreshSession: () => Promise<void>;         // 刷新会话（更新user_metadata等）
   clearSessionExpired: () => void;             // 清除过期提示
   retrySessionRecovery: () => void;            // 重试会话恢复
   resendVerification: (email: string) => Promise<AuthResult>;        // 重新发送确认邮件
@@ -41,6 +43,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [networkError, setNetworkError] = useState(false); // 网络异常标记
   const { toast, showSuccess, showError, dismiss } = useToast();
   const initSessionRef = useRef<() => void>(); // 保存初始化函数引用，供重试调用
+  const authEmailRedirectUrl = getAuthEmailRedirectUrl();
 
   /** 初始化会话（可被重试调用） */
   const initSession = async () => {
@@ -115,6 +118,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [showSuccess]);
 
   /**
+   * 刷新会话：获取最新的用户信息（如 user_metadata 更新后）
+   */
+  const refreshSession = useCallback(async () => {
+    try {
+      const { data: { session: refreshedSession } } = await supabase.auth.refreshSession();
+      setSession(refreshedSession);
+      setUser(refreshedSession?.user ?? null);
+    } catch (error) {
+      console.warn('刷新会话失败:', error);
+    }
+  }, []);
+
+  /**
    * 清除会话过期提示标记
    */
   const clearSessionExpired = useCallback(() => {
@@ -134,9 +150,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
    */
   const resendVerification = useCallback(async (email: string): Promise<AuthResult> => {
     try {
+      const resendOptions = authEmailRedirectUrl
+        ? { emailRedirectTo: authEmailRedirectUrl }
+        : undefined;
       const { error } = await supabase.auth.resend({
         type: 'signup',
         email,
+        options: resendOptions,
       });
       if (error) {
         // 检测429频率限制
@@ -147,6 +167,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           showError('发送过于频繁，请稍后再试');
           return { success: false, rateLimited: true };
         }
+        if (error.message.includes('Error sending confirmation email')) {
+          showError('确认邮件发送失败，请检查邮件服务配置');
+          return { success: false };
+        }
         showError('发送失败，请稍后重试');
         return { success: false };
       }
@@ -156,12 +180,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       showError('发送失败，请稍后重试');
       return { success: false };
     }
-  }, [showSuccess, showError]);
+  }, [showSuccess, showError, authEmailRedirectUrl]);
 
   return (
     <AuthContext.Provider value={{
       user, session, loading, sessionExpired, networkError,
-      signOut, clearSessionExpired, retrySessionRecovery,
+      signOut, refreshSession, clearSessionExpired, retrySessionRecovery,
       resendVerification,
     }}>
       {/* 全局 Toast 提示 */}

@@ -1,0 +1,380 @@
+/* ========== 用户设置页面样式 ========== */
+/* 配色规范：红 #FF4655 | 黑 #0f1923 | 白 #ECE8E1 */
+
+.user-settings {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #0f1923;
+  color: #ECE8E1;
+}
+
+/* ===== 顶部导航栏 ===== */
+.user-settings-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 32px;
+  height: 56px;
+  background: #FF4655;
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.user-settings-topbar .topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.topbar-back-btn {
+  font-family: var(--font-tungsten);
+  font-size: 14px;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 2px;
+  padding: 4px 12px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: all 0.2s ease;
+}
+
+.topbar-back-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.user-settings-topbar .brand-name {
+  font-family: var(--font-tungsten);
+  font-size: 22px;
+  font-weight: normal;
+  color: #ffffff;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.user-settings-topbar .topbar-right {
+  display: flex;
+  align-items: center;
+}
+
+.topbar-page-title {
+  font-family: var(--font-tungsten);
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* ===== 主内容区 ===== */
+.user-settings-main {
+  flex: 1;
+  padding: 40px 32px 48px;
+  max-width: 720px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* ===== 设置区块 ===== */
+.settings-section {
+  margin-bottom: 40px;
+}
+
+.section-title {
+  font-family: var(--font-tungsten);
+  font-size: 18px;
+  font-weight: normal;
+  color: #ECE8E1;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin: 0 0 20px 0;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(236, 232, 225, 0.1);
+}
+
+.section-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* ===== 信息行 ===== */
+.info-row {
+  display: flex;
+  align-items: flex-start;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(236, 232, 225, 0.05);
+  gap: 24px;
+}
+
+.info-label {
+  flex-shrink: 0;
+  width: 120px;
+  font-size: 13px;
+  color: rgba(236, 232, 225, 0.5);
+  letter-spacing: 0.5px;
+  padding-top: 2px;
+}
+
+.info-value-group {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.info-value {
+  font-size: 14px;
+  color: #ECE8E1;
+  letter-spacing: 0.3px;
+}
+
+.info-hint {
+  font-size: 12px;
+  color: rgba(236, 232, 225, 0.35);
+}
+
+.info-cooldown {
+  font-size: 12px;
+  color: rgba(255, 165, 0, 0.7);
+}
+
+/* ===== 按钮样式 ===== */
+.btn-link {
+  background: none;
+  border: none;
+  color: #FF4655;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 2px 0;
+  text-decoration: underline;
+  transition: opacity 0.2s ease;
+}
+
+.btn-link:hover {
+  opacity: 0.8;
+}
+
+.btn-primary {
+  font-family: var(--font-tungsten);
+  padding: 8px 20px;
+  background: #FF4655;
+  border: none;
+  border-radius: 2px;
+  color: #ffffff;
+  font-size: 14px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #e63e4c;
+  box-shadow: 0 4px 12px rgba(255, 70, 85, 0.3);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  font-family: var(--font-tungsten);
+  padding: 8px 20px;
+  background: transparent;
+  border: 1px solid rgba(236, 232, 225, 0.2);
+  border-radius: 2px;
+  color: rgba(236, 232, 225, 0.7);
+  font-size: 14px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  border-color: rgba(236, 232, 225, 0.4);
+  color: #ECE8E1;
+}
+
+.btn-secondary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn-danger {
+  font-family: var(--font-tungsten);
+  padding: 8px 20px;
+  background: #FF4655;
+  border: none;
+  border-radius: 2px;
+  color: #ffffff;
+  font-size: 14px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: #e63e4c;
+}
+
+.btn-danger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ===== 输入框 ===== */
+.settings-input {
+  width: 100%;
+  padding: 10px 14px;
+  background: rgba(236, 232, 225, 0.06);
+  border: 1px solid rgba(236, 232, 225, 0.12);
+  border-radius: 2px;
+  color: #ECE8E1;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.settings-input::placeholder {
+  color: rgba(236, 232, 225, 0.25);
+}
+
+.settings-input:focus {
+  border-color: #FF4655;
+  background: rgba(236, 232, 225, 0.08);
+  box-shadow: 0 0 0 3px rgba(255, 70, 85, 0.15);
+}
+
+.settings-input.error {
+  border-color: #FF4655;
+  box-shadow: 0 0 0 3px rgba(255, 70, 85, 0.15);
+}
+
+.settings-input:disabled {
+  opacity: 0.5;
+}
+
+/* ===== 行内编辑 ===== */
+.inline-edit {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.inline-edit .settings-input {
+  max-width: 320px;
+}
+
+.inline-edit-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.checking-hint {
+  font-size: 11px;
+  color: rgba(236, 232, 225, 0.5);
+}
+
+/* ===== 行内表单（密码、邮箱修改） ===== */
+.inline-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 0 8px 144px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-field .settings-input {
+  max-width: 400px;
+}
+
+.field-error {
+  color: #FF4655;
+  font-size: 12px;
+  margin-top: 4px;
+  letter-spacing: 0.3px;
+}
+
+/* ===== 确认对话框 ===== */
+.confirm-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.confirm-dialog {
+  background: #1a2634;
+  border: 1px solid rgba(236, 232, 225, 0.1);
+  border-radius: 4px;
+  padding: 32px;
+  width: 400px;
+  max-width: 90vw;
+  text-align: center;
+}
+
+.confirm-text {
+  font-size: 16px;
+  color: #ECE8E1;
+  margin: 0 0 8px 0;
+}
+
+.confirm-subtext {
+  font-size: 13px;
+  color: rgba(236, 232, 225, 0.5);
+  margin: 0 0 24px 0;
+  line-height: 1.6;
+}
+
+.confirm-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+/* ===== 响应式 ===== */
+@media (max-width: 768px) {
+  .user-settings-topbar {
+    padding: 0 16px;
+  }
+
+  .user-settings-main {
+    padding: 24px 16px 32px;
+  }
+
+  .info-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .info-label {
+    width: auto;
+  }
+
+  .inline-form {
+    padding-left: 0;
+  }
+
+  .form-field .settings-input {
+    max-width: 100%;
+  }
+}
