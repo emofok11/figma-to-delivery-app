@@ -2906,9 +2906,9 @@ const [showAddMenu, setShowAddMenu] = useState(false); // 添加容器下拉菜�
               {showAddMenu && (
                 <div className="add-container-menu">
 <button onClick={handleAddDescriptionModule}>✎ 描述模块</button>
-                  <button onClick={handleAddListItemModule}>☰ 列表条目</button>
+                  <button onClick={handleAddListItemModule}>⊞ 表格</button>
                   <button onClick={handleAddImageGroupModule}>▣ 图片组</button>
-                  <button onClick={handleAddTableModule}>⊞ 表格</button>
+                  <button onClick={handleAddTableModule}>☰ 列表条目</button>
                 </div>
               )}
             </div>

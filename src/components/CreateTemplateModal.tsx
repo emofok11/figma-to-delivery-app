@@ -937,9 +937,9 @@ export const CreateTemplateModal: React.FC<CreateTemplateModalProps> = ({
                   <button 
                     className="module-add-btn"
                     onClick={handleAddListItemModule}
-                    title="添加列表条目（标题+描述+图片）"
+                    title="添加表格（标题+描述+图片）"
                   >
-                    ☰ 列表条目
+                    ⊞ 表格
                   </button>
                   <button 
                     className="module-add-btn"
@@ -951,9 +951,9 @@ export const CreateTemplateModal: React.FC<CreateTemplateModalProps> = ({
                   <button 
                     className="module-add-btn"
                     onClick={handleAddTableModule}
-                    title="添加表格（可动态添加行）"
+                    title="添加列表条目（可动态添加行）"
                   >
-                    ⊞ 表格
+                    ☰ 列表条目
                   </button>
                 </div>
 
@@ -1098,9 +1098,9 @@ function getModuleTypeLabel(type: string): string {
   const labels: Record<string, string> = {
     'title': '• 标题',
     'description': '✎ 描述',
-    'list': '☰ 列表条目',
+    'list': '⊞ 表格',
     'image-group': '▣ 图片组',
-    'table': '⊞ 表格',
+    'table': '☰ 列表条目',
     'divider': '— 分隔线'
   };
   return labels[type] || type;
