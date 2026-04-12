@@ -903,9 +903,10 @@
 }
 
 .new-category-input .new-category-cancel-btn:hover {
-  background: #efe9e2;
+  background: #f3ede6;
   color: #0f1923;
-  border-color: rgba(15, 25, 35, 0.2);
+  border-color: rgba(15, 25, 35, 0.28);
+  box-shadow: 0 1px 3px rgba(15, 25, 35, 0.08);
 }
 
 /* 自定义分类列表 */
