@@ -331,7 +331,7 @@ export const CreateTemplateModal: React.FC<CreateTemplateModalProps> = ({
     // 使用容器 ID 作为字段前缀，确保每个 list 容器的字段 ID 唯一
     const listModule = createListItemPart(1, { idPrefix: containerId });
     listModule.id = containerId;
-    listModule.label = `自定义条目${index}`;
+    listModule.label = `自定义表格${index}`;
     setCustomModules(prev => [...prev, listModule]);
   }, [customModules]);
 
@@ -353,7 +353,7 @@ export const CreateTemplateModal: React.FC<CreateTemplateModalProps> = ({
   const handleAddTableModule = useCallback(() => {
     const tableModule = createTablePart({ 
       id: `custom-table-${Date.now()}`,
-      label: '自定义表格',
+      label: '自定义条目',
       rows: 1
     });
     setCustomModules(prev => [...prev, tableModule]);
