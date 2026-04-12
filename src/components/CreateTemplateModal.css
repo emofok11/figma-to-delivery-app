@@ -278,6 +278,19 @@
   color: #FF4655;
 }
 
+.modal-footer .modal-cancel-btn {
+  background: #f7f3ee;
+  color: rgba(15, 25, 35, 0.78);
+  border: 1px solid rgba(15, 25, 35, 0.14);
+}
+
+.modal-footer .modal-cancel-btn:hover {
+  background: #f1ebe4;
+  color: #0f1923;
+  border-color: rgba(15, 25, 35, 0.26);
+  box-shadow: 0 1px 3px rgba(15, 25, 35, 0.08);
+}
+
 /* Token 输入框包装器（含显示/隐藏切换按钮） */
 .token-input-wrapper {
   position: relative;

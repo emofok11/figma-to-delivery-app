@@ -1037,7 +1037,7 @@ export const CreateTemplateModal: React.FC<CreateTemplateModalProps> = ({
         <div className="modal-footer">
           {step === 1 && (
             <>
-              <button className="btn-secondary" onClick={handleClose}>
+              <button className="btn-secondary modal-cancel-btn" onClick={handleClose}>
                 取消
               </button>
               <button
